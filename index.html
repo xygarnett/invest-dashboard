@@ -288,7 +288,7 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
     <div class="header">
       <div>
         <h1>Portfolio Dashboard</h1>
-        <div class="greeting">欢迎回来，蒂姆 · 最后更新 2026-08-26 21:15</div>
+        <div class="greeting">欢迎回来，蒂姆 · 最后更新 2026-08-27 15:06</div>
       </div>
       <div class="header-right">
         <div class="market-pill"><span class="dot"></span>A股 · 已收盘</div>
@@ -339,74 +339,6 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
       </div>
     </div>
 
-    <!-- Top Holdings + Performance -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Top Holdings · 5只股票</div>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Stock</th>
-                <th>Qty</th>
-                <th>Avg Price</th>
-                <th>Current</th>
-                <th>Value</th>
-                <th>P&L</th>
-              </tr>
-            </thead>
-            <tbody id="topHoldings"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Portfolio Performance</div>
-          <div class="time-tabs">
-            <button>1D</button>
-            <button>1W</button>
-            <button>1M</button>
-            <button>3M</button>
-            <button>6M</button>
-            <button>1Y</button>
-            <button class="active">All</button>
-          </div>
-        </div>
-        <div id="perfChart" style="margin: 8px 0 4px;"></div>
-        <div class="perf-stats">
-          <div class="perf-stat">
-            <div class="perf-stat-label">1 Year</div>
-            <div class="perf-stat-value up">+24.3%</div>
-          </div>
-          <div class="perf-stat">
-            <div class="perf-stat-label">6 Months</div>
-            <div class="perf-stat-value up">+18.7%</div>
-          </div>
-          <div class="perf-stat">
-            <div class="perf-stat-label">3 Months</div>
-            <div class="perf-stat-value up">+12.4%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sector + 综合收益 -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">资产类别 · Sector Allocation</div>
-        </div>
-        <div id="sectorAlloc"></div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">综合收益 · 当前持仓</div>
-        </div>
-        <div class="pnl-grid" id="pnlSummary"></div>
-      </div>
-    </div>
 
     <!-- 全部持仓明细 -->
     <div class="card" id="holdings" style="padding: 0; margin-bottom: 20px; overflow: hidden;">
@@ -415,7 +347,7 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
         <div class="card-hint">点击列头切换升序/降序</div>
       </div>
       <div style="padding: 10px 22px; border-bottom: 1px solid #eef2f7; background: #f8fafc; font-size: 12.5px; color: #475569;">
-        资源占比 <b style="color:#cb0218;">62.8%</b> ｜ 资源新增上限（C规则 08-24 生效）：常态 <b>55%</b> / 强势期 65%（有色&gt;MA20&gt;MA60+跑赢中证800≥5pct+绿灯+回撤&lt;18%）｜ 当前适用 <b style="color:#cb0218;">55%</b> ｜ 现金战略下限 0% ｜ 最多 7 只（3核心+2存量动态+2轮动）
+        资源占比 <b style="color:#cb0218;">63.0%</b> ｜ 资源新增上限（C规则 08-24 生效）：常态 <b>55%</b> / 强势期 65%（有色&gt;MA20&gt;MA60+跑赢中证800≥5pct+绿灯+回撤&lt;18%）｜ 当前适用 <b style="color:#cb0218;">55%</b> ｜ 现金战略下限 0% ｜ 最多 7 只（3核心+2存量动态+2轮动）
       </div>
       <div class="tbl-wrap">
         <table class="tbl" style="min-width: 980px;">
@@ -470,12 +402,23 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
     <div class="card" id="phHead" style="margin-bottom: 20px;">
       <div class="card-head">
         <div class="card-title">每日行情历史</div>
-        <div class="card-hint">由 price_history.json 自动累积</div>
+        <div class="time-tabs" id="phTabs">
+          <button data-tab="all" class="active">全部</button>
+          <button data-tab="stock">股票</button>
+          <button data-tab="fund">基金</button>
+        </div>
       </div>
-      <div class="tbl-wrap">
+      <div style="font-size:11px; color:#94a3b8; margin-bottom:10px;">股票 OHLC 由 price_history.json 累积 · 基金净值由 nav_history 累积</div>
+      <div class="tbl-wrap" id="phStockWrap">
         <table class="tbl" style="min-width: 700px;">
           <thead><tr id="phHeadRow"></tr></thead>
           <tbody id="phBody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-wrap" id="phFundWrap" style="display:none;">
+        <table class="tbl" style="min-width: 500px;">
+          <thead><tr id="phFundHeadRow"></tr></thead>
+          <tbody id="phFundBody"></tbody>
         </table>
       </div>
     </div>
@@ -550,17 +493,17 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
 <script>
 // ============ Data ============
 const holdings = [
-  { name:'工银瑞信新兴制造A', code:'009707', type:'基金', quantity:48000,   cost:300000.00, value:231076.80, gain:-68923.20, gainRate:-22.97, dayGain:4737.60,  cumGain:203265.83, m1:-8.88,  m6:43.56,  ratio:24.8 },
-  { name:'股票账户现金',      code:'-',     type:'现金', quantity:null,    cost:142395.25, value:142395.25, gain:0,         gainRate:0,       dayGain:0,        cumGain:0,        m1:null,   m6:null,   ratio:15.3 },
-  { name:'洛阳钼业',          code:'603993',type:'股票', quantity:6800,    cost:130587.49, value:133212.00, gain:2624.51,   gainRate:2.01,    dayGain:7956.00,  cumGain:19403.51, m1:2.96,   m6:-18.30, ratio:14.3 },
-  { name:'紫金矿业',          code:'601899',type:'股票', quantity:2000,    cost:60003.75,  value:68940.00,  gain:8936.25,   gainRate:14.89,   dayGain:1580.00,  cumGain:15838.21, m1:12.83,  m6:-16.46, ratio:7.4  },
-  { name:'金鹰核心资源',      code:'210009',type:'基金', quantity:34870.20,cost:100000.00, value:76763.26,  gain:-23236.74, gainRate:-23.24, dayGain:-582.87,  cumGain:3359.71,  m1:3.86,   m6:-20.79, ratio:8.2  },
-  { name:'中国稀土',          code:'000831',type:'股票', quantity:1200,    cost:64270.50,  value:67236.00,  gain:2965.50,   gainRate:4.61,    dayGain:-2160.00, cumGain:8869.50,  m1:31.87,  m6:5.50,   ratio:7.2  },
-  { name:'景顺策略精选',      code:'000242',type:'基金', quantity:12000,   cost:40000.00,  value:50220.00,  gain:10220.00,  gainRate:25.55,   dayGain:636.00,   cumGain:16734.27, m1:2.99,   m6:8.69,   ratio:5.4  },
-  { name:'建信新兴市场',      code:'539002',type:'基金', quantity:18831.29, cost:29195.50,  value:43971.06,  gain:14775.56,  gainRate:50.61,   dayGain:564.94,   cumGain:15209.48, m1:-1.35,  m6:44.30,  ratio:4.7  },
-  { name:'南大光电',          code:'300346',type:'股票', quantity:1000,    cost:54157.00,  value:54470.00,  gain:313.00,    gainRate:0.58,    dayGain:-480.00,  cumGain:46406.45, m1:-11.97, m6:5.65,   ratio:5.8  },
-  { name:'兴业银锡',          code:'000426',type:'股票', quantity:1200,    cost:47880.00,  value:48288.00,  gain:408.00,    gainRate:0.85,    dayGain:888.00,   cumGain:0,        m1:null,   m6:null,   ratio:5.2  },
-  { name:'中国铝业',          code:'601600',type:'股票', quantity:1600,    cost:16169.60,  value:15344.00,  gain:-825.60,   gainRate:-5.11,   dayGain:352.00,   cumGain:-1589.16, m1:4.87,   m6:-27.71, ratio:1.6  },
+  { name:'工银瑞信新兴制造A', code:'009707', type:'基金', quantity:48000,   cost:300000.00, value:231076.80, gain:-68923.20, gainRate:-22.97, dayGain:0,         cumGain:203265.83, m1:-8.88,  m6:43.56,  ratio:24.6 },
+  { name:'股票账户现金',      code:'-',     type:'现金', quantity:null,    cost:142395.25, value:142395.25, gain:0,         gainRate:0,       dayGain:0,        cumGain:0,        m1:null,   m6:null,   ratio:15.2 },
+  { name:'洛阳钼业',          code:'603993',type:'股票', quantity:6800,    cost:130587.49, value:132668.00, gain:2080.51,   gainRate:1.59,    dayGain:-544.00,  cumGain:19403.51, m1:2.96,   m6:-18.30, ratio:14.1 },
+  { name:'紫金矿业',          code:'601899',type:'股票', quantity:2000,    cost:60003.75,  value:69140.00,  gain:9136.25,   gainRate:15.23,   dayGain:200.00,   cumGain:15838.21, m1:12.83,  m6:-16.46, ratio:7.4  },
+  { name:'金鹰核心资源',      code:'210009',type:'基金', quantity:34870.20,cost:100000.00, value:76763.26,  gain:-23236.74, gainRate:-23.24, dayGain:0,        cumGain:3359.71,  m1:3.86,   m6:-20.79, ratio:8.2  },
+  { name:'中国稀土',          code:'000831',type:'股票', quantity:1200,    cost:64270.50,  value:72972.00,  gain:8701.50,   gainRate:13.54,   dayGain:5736.00,  cumGain:8869.50,  m1:31.87,  m6:5.50,   ratio:7.8  },
+  { name:'景顺策略精选',      code:'000242',type:'基金', quantity:12000,   cost:40000.00,  value:50220.00,  gain:10220.00,  gainRate:25.55,   dayGain:0,        cumGain:16734.27, m1:2.99,   m6:8.69,   ratio:5.3  },
+  { name:'建信新兴市场',      code:'539002',type:'基金', quantity:18540.41, cost:28500.00,  value:43291.86,  gain:14791.86,  gainRate:51.90,   dayGain:0,        cumGain:15219.08, m1:-1.35,  m6:44.30,  ratio:4.6  },
+  { name:'南大光电',          code:'300346',type:'股票', quantity:1000,    cost:54157.00,  value:56610.00,  gain:2453.00,   gainRate:4.53,    dayGain:2140.00,  cumGain:46406.45, m1:-11.97, m6:5.65,   ratio:6.0  },
+  { name:'兴业银锡',          code:'000426',type:'股票', quantity:1200,    cost:47880.00,  value:48828.00,  gain:948.00,    gainRate:1.98,    dayGain:540.00,   cumGain:0,        m1:null,   m6:null,   ratio:5.2  },
+  { name:'中国铝业',          code:'601600',type:'股票', quantity:1600,    cost:16169.60,  value:15440.00,  gain:-729.60,   gainRate:-4.51,   dayGain:96.00,    cumGain:-1589.16, m1:4.87,   m6:-27.71, ratio:1.6  },
 ];
 
 const totalCost = holdings.reduce((s,h) => s + h.cost, 0);
@@ -602,11 +545,6 @@ document.getElementById('kpiRow').innerHTML = `
     <div class="kpi-sub">11 项持仓 · 收盘</div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">总投入 · Total Investment</div>
-    <div class="kpi-value">${fmt(totalCost)}</div>
-    <div class="kpi-sub">成本</div>
-  </div>
-  <div class="kpi-card">
     <div class="kpi-label">浮动盈亏 · Total Gain/Loss</div>
     <div class="kpi-value ${totalGain >= 0 ? 'up' : 'down'}">${fmt(totalGain)}</div>
     <div class="kpi-sub">${fmtPct(totalRate)}</div>
@@ -615,6 +553,11 @@ document.getElementById('kpiRow').innerHTML = `
     <div class="kpi-label">已实现收益 · Realized</div>
     <div class="kpi-value up">${fmt(realizedGain)}</div>
     <div class="kpi-sub">8/5 + 8/18 紫金卖出</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">综合总收益 · Combined</div>
+    <div class="kpi-value ${totalCombined >= 0 ? 'up' : 'down'}">${fmt(totalCombined)}</div>
+    <div class="kpi-sub">${fmtPct(combinedRate)} · 浮动+已实现</div>
   </div>
 `;
 
@@ -652,155 +595,6 @@ document.getElementById('allocSummary').innerHTML = allocData.map(a => {
     <div class="alloc-val">${fmt(a.value)}</div>
   </div>`;
 }).join('');
-
-// ============ Top Holdings (5只股票) ============
-const stockHoldings = holdings.filter(h => h.type === '股票').sort((a,b) => b.value - a.value);
-document.getElementById('topHoldings').innerHTML = stockHoldings.map(h => {
-  const costPrice = h.cost / h.quantity;
-  const cur = h.value / h.quantity;
-  const gainCls = h.gain >= 0 ? 'text-up' : 'text-down';
-  return `<tr>
-    <td>${nameCell(h.name, h.code, h.type)}<div class="code">${h.code}</div></td>
-    <td>${h.quantity.toLocaleString()}</td>
-    <td>¥${costPrice.toFixed(2)}</td>
-    <td>¥${cur.toFixed(2)}</td>
-    <td style="font-weight: 600;">${fmt(h.value)}</td>
-    <td class="${gainCls}">${fmt(h.gain)}<br><span style="font-size: 11px;">${fmtPct(h.gainRate)}</span></td>
-  </tr>`;
-}).join('');
-
-// ============ Portfolio Performance Chart ============
-// 基于 price_history 模拟的总价值曲线（用每只股票 close × 持仓数 估算总价值）
-const phStocks = {
-  '2026-08-14': { '603993':18.44, '601899':32.53, '000831':60.95, '300346':58.71, '601600':9.26 },
-  '2026-08-17': { '603993':19.13, '601899':33.36, '000831':62.79, '300346':61.20, '601600':9.54 },
-  '2026-08-18': { '603993':18.82, '601899':33.56, '000831':62.49, '300346':61.87, '601600':9.45 },
-  '2026-08-19': { '603993':18.00, '601899':32.76, '000831':59.54, '300346':58.26, '601600':9.35 },
-  '2026-08-20': { '603993':18.27, '601899':34.25, '000831':57.95, '300346':57.03, '601600':9.17 },
-  '2026-08-21': { '603993':18.62, '601899':34.74, '000831':56.33, '300346':56.85, '601600':9.42 },
-  '2026-08-24': { '603993':18.99, '601899':34.54, '000831':58.22, '300346':56.02, '601600':9.50 },
-  '2026-08-25': { '603993':18.42, '601899':33.68, '000831':57.83, '300346':54.95, '601600':9.37, '000426':39.50 },
-  '2026-08-26': { '603993':19.59, '601899':34.47, '000831':56.03, '300346':54.47, '601600':9.59, '000426':40.24 }
-};
-const fundValues = { '2026-08-14': 0, '2026-08-17': 0, '2026-08-18': 0, '2026-08-19': 0, '2026-08-20': 0, '2026-08-21': 0, '2026-08-24': 0, '2026-08-25': 0, '2026-08-26': 0 };
-// 基金按净值日期对应现值，8/14-8/19 沿用 8/17 净值，8/20 用今日净值
-const stockQtys = { '603993':6800, '601899':3000, '000831':1200, '300346':1000, '601600':1600 };
-// 8/18 13:04 卖出紫金 1000 股后，紫金 2000 股
-const stockQtys8_18 = { '603993':6800, '601899':2000, '000831':1200, '300346':1000, '601600':1600 };
-// 8/25 轮动席买入兴业银锡 1200 股（V10-D S级）
-const stockQtys8_25 = { '603993':6800, '601899':2000, '000831':1200, '300346':1000, '601600':1600, '000426':1200 };
-// 8/18 卖出后现金 +33050：205329.56+33050=240159.53
-// 8/19 提现转出 962+6000=6962，建信定投 -500：240159.53-7462=232697.53
-// 8/20 建信定投 -500：232697.53-500=232197.53
-// 8/21 建信定投 -500：232197.53-500=231697.53（净值2.3290@8-19，QDII滞后，待刷新）
-// 8/22 现金口径修正 -18922.28（历史提现/理财赎回未记录，蒂姆确认股票基金数据正确仅改现金）：231697.53-18922.28=212775.25；建信定投¥500/日从修正后现金扣除
-// 8/24 建信定投第4笔 -500：212775.25-500=212275.25
-// 8/25 建信追加额度¥22,000一次性预留：212275.25-22000=190275.25；同日轮动席买入兴业银锡 1200股@39.90 扣现金 -47880：190275.25-47880=142395.25（后续定投不再扣现金，改为500份/日）
-// 8/26 建信定投500份/日不扣现金（额度已预留），现金不变
-const cashByDate = { '2026-08-14':205329.56, '2026-08-17':205329.56, '2026-08-18':240159.53, '2026-08-19':232697.53, '2026-08-20':232197.53, '2026-08-21':212775.25, '2026-08-24':212275.25, '2026-08-25':142395.25, '2026-08-26':142395.25 };
-const fundValueByDate = { '2026-08-20': 401507.03, '2026-08-21': 403045.24, '2026-08-24': 406269.18, '2026-08-25': 401354.49, '2026-08-26': 402031.12 }; // 8/26 4只基金现值合计：231076.80+76763.26+50220.00+43971.06（工银4.8141/金鹰2.2014/景顺4.185净值8-26，建信2.3350@8-25，iFinD）
-
-function calcTotalValue(date) {
-  const closes = phStocks[date] || {};
-  const qtys = (date === '2026-08-18' || date === '2026-08-19' || date === '2026-08-20' || date === '2026-08-21' || date === '2026-08-24') ? stockQtys8_18 : (date === '2026-08-25' || date === '2026-08-26' ? stockQtys8_25 : stockQtys);
-  let v = 0;
-  Object.keys(qtys).forEach(c => { v += (closes[c] || 0) * qtys[c]; });
-  // 基金 + 现金 + 理财 = 持股以外的所有
-  v += fundValueByDate[date] || 423107.07; // 4只基金 8/17 现值
-  v += (cashByDate[date] || 207109.53) + 0; // 现金（理财已赎回，8/18 现金含 33050 卖出款）
-  return v;
-}
-
-// ============ Portfolio Performance Chart（周期切换：1D/1W 真实数据，更长周期数据不足则置灰） ============
-const perfDataAll = Object.keys(phStocks).map(d => ({ date: d.slice(5), value: calcTotalValue(d) }));
-const perfRangeDays = { '1D': 2, '1W': 5, '1M': 22, '3M': 66, '6M': 132, '1Y': 264, 'All': 1 }; // 各周期所需交易日数；All=全部可用
-const w = 480, hgt = 200, pad = 30;
-
-function renderPerf(range) {
-  const need = perfRangeDays[range] || 1;
-  const perfData = need === 1 ? perfDataAll : perfDataAll.slice(-need);
-  if (perfData.length < 2) {
-    document.getElementById('perfChart').innerHTML = '<div style="padding:60px 0; text-align:center; color:#94a3b8; font-size:12px;">该周期历史数据不足，暂无法绘制</div>';
-    return;
-  }
-  const minV = Math.min(...perfData.map(d => d.value)) * 0.998;
-  const maxV = Math.max(...perfData.map(d => d.value)) * 1.005;
-  const xStep = (w - 2*pad) / (perfData.length - 1);
-  const points = perfData.map((d, i) => {
-    const x = pad + i * xStep;
-    const y = pad + (hgt - 2*pad) * (1 - (d.value - minV) / (maxV - minV));
-    return { x, y, ...d };
-  });
-  const pathD = points.map((p, i) => i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`).join(' ');
-  const areaD = pathD + ` L ${points[points.length-1].x} ${hgt - pad} L ${points[0].x} ${hgt - pad} Z`;
-  const totalChg = ((perfData[perfData.length-1].value - perfData[0].value) / perfData[0].value) * 100;
-
-  document.getElementById('perfChart').innerHTML = `
-  <svg width="100%" height="${hgt}" viewBox="0 0 ${w} ${hgt}" preserveAspectRatio="none" style="display: block;">
-    <defs>
-      <linearGradient id="perfGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#6366f1" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <line x1="${pad}" y1="${pad}" x2="${w - pad}" y2="${pad}" stroke="#f1f5f9" stroke-width="1"/>
-    <line x1="${pad}" y1="${hgt/2}" x2="${w - pad}" y2="${hgt/2}" stroke="#f1f5f9" stroke-width="1"/>
-    <line x1="${pad}" y1="${hgt - pad}" x2="${w - pad}" y2="${hgt - pad}" stroke="#f1f5f9" stroke-width="1"/>
-    <path d="${areaD}" fill="url(#perfGrad)"/>
-    <path d="${pathD}" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="white" stroke="#6366f1" stroke-width="2.5"/>`).join('')}
-    ${points.map(p => `<text x="${p.x}" y="${hgt - 8}" text-anchor="middle" font-size="11" fill="#94a3b8">${p.date}</text>`).join('')}
-  </svg>
-  <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: #64748b;">
-    <span>${fmt(perfData[0].value)}</span>
-    <span style="color: ${totalChg >= 0 ? '#dc2626' : '#059669'}; font-weight: 600;">${fmtPct(totalChg)}</span>
-    <span>${fmt(perfData[perfData.length-1].value)}</span>
-  </div>
-`;
-
-  // 数据不足的周期按钮置灰（当前仅 9 个交易日，1M 及以上暂不可用）
-  document.querySelectorAll('.time-tabs button').forEach(b => {
-    b.disabled = (perfRangeDays[b.textContent] || 1) > perfDataAll.length;
-  });
-}
-
-renderPerf('All');
-
-// ============ Sector Allocation ============
-document.getElementById('sectorAlloc').innerHTML = allocData.map(a => {
-  const pct = (a.value / totalValue) * 100;
-  return `<div class="alloc-row">
-    <div class="alloc-dot" style="background: ${typeColor[a.type]};"></div>
-    <div class="alloc-name">${a.type}</div>
-    <div class="alloc-bar"><div class="fill" style="width: ${pct.toFixed(1)}%; background: ${typeColor[a.type]};"></div></div>
-    <div class="alloc-pct">${pct.toFixed(1)}%</div>
-    <div class="alloc-val">${fmt(a.value)}</div>
-  </div>`;
-}).join('');
-
-// ============ 综合收益 ============
-document.getElementById('pnlSummary').innerHTML = `
-  <div class="pnl-item">
-    <div class="label">浮动盈亏</div>
-    <div class="value ${totalGain >= 0 ? 'up' : 'down'}">${fmt(totalGain)}</div>
-    <div class="sub">当前持仓 · 实时</div>
-  </div>
-  <div class="pnl-item">
-    <div class="label">已实现收益</div>
-    <div class="value up">${fmt(realizedGain)}</div>
-    <div class="sub">8/5 + 8/18 紫金卖出</div>
-  </div>
-  <div class="pnl-item hero">
-    <div class="label">综合总收益</div>
-    <div class="value ${totalCombined >= 0 ? 'up' : 'down'}">${fmt(totalCombined)}</div>
-    <div class="sub">浮动 + 已实现</div>
-  </div>
-  <div class="pnl-item">
-    <div class="label">综合收益率</div>
-    <div class="value ${combinedRate >= 0 ? 'up' : 'down'}">${fmtPct(combinedRate)}</div>
-    <div class="sub">综合 / 总成本</div>
-  </div>
-`;
 
 // ============ 全部持仓明细（可点击排序）============
 let currentSort = { col: -1, dir: 'desc' };
@@ -881,12 +675,12 @@ document.getElementById('brokerYearlyBody').innerHTML = yKeys.map((k, i) => {
 // 回本成本：（累计买入实际支出−累计卖出实际回款−累计净现金分红）÷当前剩余股数——用于累计实际收益；不触发买卖
 // 流水缺失/未含税费：breakeven 置 null 并显示状态，不得猜测
 const stockCostRef = [
-  { name:'洛阳钼业', code:'603993', qty:6800, costPrice:19.2040, breakeven:16.99,  breakevenNote:'未含税费', last:19.59 },
-  { name:'紫金矿业', code:'601899', qty:2000, costPrice:30.0019, breakeven:25.7720, breakevenNote:'未含税费·净分红', last:34.47 },
-  { name:'中国稀土', code:'000831', qty:1200, costPrice:53.5588, breakeven:null,   breakevenNote:'流水缺失', last:56.03 },
-  { name:'南大光电', code:'300346', qty:1000, costPrice:54.1570, breakeven:54.14,  breakevenNote:'未含税费·8/5前流水缺失', last:54.47 },
-  { name:'兴业银锡', code:'000426', qty:1200, costPrice:39.9000, breakeven:null,   breakevenNote:'流水缺失·8/25新建仓', last:39.50 },
-  { name:'中国铝业', code:'601600', qty:1600, costPrice:10.1060, breakeven:null,   breakevenNote:'流水缺失', last:9.59 }
+  { name:'洛阳钼业', code:'603993', qty:6800, costPrice:19.2040, breakeven:16.99,  breakevenNote:'未含税费', last:19.51 },
+  { name:'紫金矿业', code:'601899', qty:2000, costPrice:30.0019, breakeven:25.7720, breakevenNote:'未含税费·净分红', last:34.57 },
+  { name:'中国稀土', code:'000831', qty:1200, costPrice:53.5588, breakeven:null,   breakevenNote:'流水缺失', last:60.81 },
+  { name:'南大光电', code:'300346', qty:1000, costPrice:54.1570, breakeven:54.14,  breakevenNote:'未含税费·8/5前流水缺失', last:56.61 },
+  { name:'兴业银锡', code:'000426', qty:1200, costPrice:39.9000, breakeven:null,   breakevenNote:'流水缺失·8/25新建仓', last:40.69 },
+  { name:'中国铝业', code:'601600', qty:1600, costPrice:10.1060, breakeven:null,   breakevenNote:'流水缺失', last:9.65 }
 ];
 document.getElementById('stockCostBodyTbody').innerHTML = stockCostRef.map(s => {
   const holdGain = (s.last - s.costPrice) / s.costPrice * 100;
@@ -965,18 +759,28 @@ const priceHistory = [
     '601899': { open:34.70, close:33.68, high:34.70, low:33.40 },
     '000831': { open:58.22, close:57.83, high:59.85, low:57.13 },
     '300346': { open:55.34, close:54.95, high:55.69, low:52.79 },
-    '601600': { open:9.42,  close:9.37,  high:9.48,  low:9.22 }
+    '601600': { open:9.42,  close:9.37,  high:9.48,  low:9.22 },
+    '000426': { open:40.21, close:39.50, high:41.77, low:38.79 }
   }},
   { date:'2026-08-26', rows: {
     '603993': { open:18.56, close:19.59, high:19.99, low:18.56 },
     '601899': { open:33.70, close:34.47, high:35.35, low:33.70 },
     '000831': { open:57.98, close:56.03, high:58.62, low:54.66 },
     '300346': { open:55.00, close:54.47, high:55.54, low:54.00 },
-    '601600': { open:9.38,  close:9.59,  high:9.68,  low:9.33 }
+    '601600': { open:9.38,  close:9.59,  high:9.68,  low:9.33 },
+    '000426': { open:40.21, close:40.24, high:41.77, low:39.55 }
+  }},
+  { date:'2026-08-27', rows: {
+    '603993': { open:19.23, close:19.51, high:19.63, low:19.15 },
+    '601899': { open:33.80, close:34.57, high:34.86, low:33.79 },
+    '000831': { open:55.98, close:60.81, high:60.88, low:55.70 },
+    '300346': { open:54.89, close:56.61, high:56.78, low:54.15 },
+    '601600': { open:9.55,  close:9.65,  high:9.65,  low:9.51 },
+    '000426': { open:40.56, close:40.69, high:41.85, low:40.03 }
   }}
 ];
-const phNames = { '603993':'洛阳钼业', '601899':'紫金矿业', '000831':'中国稀土', '300346':'南大光电', '601600':'中国铝业' };
-const phCodes = ['603993','601899','000831','300346','601600'];
+const phNames = { '603993':'洛阳钼业', '601899':'紫金矿业', '000831':'中国稀土', '300346':'南大光电', '601600':'中国铝业', '000426':'兴业银锡' };
+const phCodes = ['603993','601899','000831','300346','601600','000426'];
 
 document.getElementById('phHeadRow').innerHTML = '<th>标的</th>' +
   priceHistory.map(p => `<th>${p.date.slice(5)}</th>`).join('');
@@ -997,15 +801,48 @@ document.getElementById('phBody').innerHTML = phCodes.map(code => {
   return `<tr><td>${nameCell(phNames[code], code, '股票')}<div class="code">${code}</div></td>${cells}</tr>`;
 }).join('');
 
-// 时间切换按钮：按周期重绘图表（1D/1W 真实数据；1M 及以上数据不足自动置灰）
-document.querySelectorAll('.time-tabs button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (btn.disabled) return;
-    document.querySelectorAll('.time-tabs button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderPerf(btn.textContent);
+// 基金净值（fetch fund_nav.json，最近45个净值点）
+function renderFundNav(fn) {
+  const codes = Object.keys(fn);
+  const allDates = [...new Set(codes.flatMap(c => fn[c].history.map(h => h.date)))].sort();
+  document.getElementById('phFundHeadRow').innerHTML = '<th>基金</th>' +
+    allDates.map(d => `<th>${d.slice(5)}</th>`).join('');
+  document.getElementById('phFundBody').innerHTML = codes.map(c => {
+    const byDate = Object.fromEntries(fn[c].history.map(h => [h.date, h.nav]));
+    const cells = allDates.map((d, i) => {
+      const nav = byDate[d];
+      if (nav === undefined) return '<td>-</td>';
+      const prevDate = allDates.slice(0, i).reverse().find(pd => byDate[pd] !== undefined);
+      const prevNav = prevDate ? byDate[prevDate] : null;
+      const chg = prevNav ? (nav - prevNav) / prevNav * 100 : null;
+      const cc = chg === null ? '' : (chg >= 0 ? '#dc2626' : '#059669');
+      const chgStr = chg === null ? '' : `<span style="font-size: 11px; color: ${cc};">${chg>=0?'+':''}${chg.toFixed(2)}%</span>`;
+      return `<td><div style="font-weight: 700; color: #0f172a;">${nav.toFixed(4)} ${chgStr}</div></td>`;
+    }).join('');
+    return `<tr><td>${fn[c].name}<div class="code">${c}</div></td>${cells}</tr>`;
+  }).join('');
+}
+fetch('fund_nav.json?t=' + Date.now(), { cache: 'no-store' })
+  .then(r => r.json())
+  .then(renderFundNav)
+  .catch(() => {});
+
+// Tab 切换：全部 / 股票 / 基金
+(function() {
+  const tabs = document.querySelectorAll('#phTabs button');
+  const stockWrap = document.getElementById('phStockWrap');
+  const fundWrap = document.getElementById('phFundWrap');
+  if (!tabs.length || !stockWrap || !fundWrap) return;
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const t = btn.dataset.tab;
+      stockWrap.style.display = (t === 'fund') ? 'none' : '';
+      fundWrap.style.display = (t === 'stock') ? 'none' : '';
+    });
   });
-});
+})();
 
 // sidebar 导航锚点平滑滚动 + active 切换
 document.querySelectorAll('.sidebar nav a').forEach(a => {
@@ -1186,10 +1023,10 @@ document.querySelectorAll('.sidebar nav a').forEach(a => {
         if (!d || !Array.isArray(d.receipts) || d.receipts.length === 0) { panel.style.display = 'none'; return; }
         panel.style.display = 'block';
         updatedEl.textContent = '更新于 ' + (d.updated || '');
-        // 仅显示「每日收盘后审核版」（15:15 收盘确认），最近 3 天；其他 slot 保留在文件不在面板展示
+         // 仅显示「每日收盘后审核版」（15:20 收盘确认），最近 3 天；其他 slot 保留在文件不在面板展示
         const cutoff = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10);
         const items = d.receipts.filter(r => {
-          const isClose = (r.id && r.id.includes('1515')) || (r.slot && r.slot.includes('收盘确认'));
+          const isClose = (r.id && (r.id.includes('1515') || r.id.includes('1520'))) || (r.slot && r.slot.includes('收盘确认'));
           if (!isClose) return false;
           const dStr = (r.ts || '').slice(0, 10);
           return dStr >= cutoff;
