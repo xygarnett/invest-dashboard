@@ -1,6 +1,6 @@
 {
   "note": "历史交易与资金进出明细（合并 holdings.json trades + trade_ledger.json ledger，按日期倒序，最新在前）。action: 买入/卖出/提现/定投买入。有成交或资金变动后追加/更新本文件（与 trade_ledger.json 去重：同股同交易日原则上只记一次）。",
-  "updated": "2026-08-27（建信539002第5笔由500份更正为固定金额¥500，累计2,500/24,000）",
+  "updated": "2026-08-28（补录中国稀土/中国铝业券商历史买入流水）",
   "trades": [
     {
       "date": "2026-08-25",
@@ -155,6 +155,50 @@
       "amount": 25648.28,
       "realizedGain": null,
       "note": "建仓买入500股@约51.30（券商总成本60,016倒推）"
+    },
+    {
+      "date": "2026-06-16",
+      "name": "中国铝业",
+      "code": "601600",
+      "action": "买入",
+      "price": 10.25,
+      "quantity": 1600,
+      "amount": 16400,
+      "realizedGain": null,
+      "note": "13:00:07 券商成交1600股@10.25；补录券商历史成交"
+    },
+    {
+      "date": "2026-06-16",
+      "name": "中国稀土",
+      "code": "000831",
+      "action": "买入",
+      "price": 60.0,
+      "quantity": 200,
+      "amount": 12000,
+      "realizedGain": null,
+      "note": "13:58:18 券商成交200股@60.00；补录券商历史成交"
+    },
+    {
+      "date": "2026-01-12",
+      "name": "中国稀土",
+      "code": "000831",
+      "action": "买入",
+      "price": 54.0,
+      "quantity": 300,
+      "amount": 16200,
+      "realizedGain": null,
+      "note": "13:00:01 券商成交300股@54.00；补录券商历史成交"
+    },
+    {
+      "date": "2026-01-07",
+      "name": "中国稀土",
+      "code": "000831",
+      "action": "买入",
+      "price": 51.55,
+      "quantity": 700,
+      "amount": 36085,
+      "realizedGain": null,
+      "note": "13:21:44 券商成交700股@51.55；补录券商历史成交"
     }
   ]
 }

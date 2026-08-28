@@ -158,8 +158,6 @@ body.privacy-mode .stock-link, body.privacy-mode .nm, body.privacy-mode .code,
 body.privacy-mode .tag, body.privacy-mode .market-pill,
 body.privacy-mode .greeting, body.privacy-mode .logo-title, body.privacy-mode .logo-sub,
 body.privacy-mode .search-box, body.privacy-mode .header h1,
-body.privacy-mode #receiptList, body.privacy-mode #receiptUpdated,
-body.privacy-mode #alertBanner, body.privacy-mode #notifyStatus,
 body.privacy-mode #adviceList, body.privacy-mode #adviceUpdated, body.privacy-mode #tradeUpdated,
 body.privacy-mode footer {
   filter: blur(6px) !important;
@@ -241,16 +239,6 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
   #holdings .tbl th, #holdings .tbl td { padding: 6px 6px; font-size: 11.5px; }
   #holdings .tbl th { white-space: normal; }
 
-  /* === 通知条：允许换行，按钮独占一行 === */
-  #notifySetup { flex-wrap: wrap; gap: 8px 12px; padding: 10px 12px; }
-  #notifySetup > span:first-child { flex: 1 1 100%; font-size: 12.5px; }
-  #notifySetup #enableNotifyBtn { flex: 1 1 auto; }
-  #notifySetup #notifyStatus { flex: 1 1 100%; }
-
-  /* === 执行回执面板：summary 换行显示 === */
-  #receiptList > div { flex-wrap: wrap; }
-  #receiptList > div > span:last-child { flex: 1 1 100%; margin-top: 4px; font-size: 11.5px; word-break: break-word; }
-
   /* === 参考数据表（持仓股票价格参考、每日行情历史）保持 .tbl-wrap 可横向滑动 === */
 
   footer { padding: 20px 0 12px; }
@@ -296,28 +284,6 @@ body.privacy-mode #privacyBtn { filter: none !important; pointer-events: auto !i
         <button id="privacyBtn" title="一键隐藏/显示全部数据" style="width:34px;height:34px;border:1px solid #e2e8f0;border-radius:50%;background:#fff;cursor:pointer;font-size:15px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;">👁️</button>
         <div class="avatar">蒂</div>
       </div>
-    </div>
-
-    <!-- Alert Banner -->
-    <div id="alertBanner" style="display:none; margin-bottom:14px; padding:12px 16px; border-radius:10px; background:#fef2f2; border:1px solid #fecaca; font-size:14px; font-weight:500; color:#b91c1c;"></div>
-
-    <!-- 通知开启 + 声音测试 -->
-    <div id="notifySetup" style="display:flex; align-items:center; gap:12px; margin-bottom:14px; padding:10px 16px; border-radius:10px; background:#eff6ff; border:1px solid #bfdbfe; font-size:13px; color:#1e40af;">
-      <span>🔔 盯盘提醒需要开启浏览器通知</span>
-      <button id="enableNotifyBtn" style="padding:6px 14px; border:none; border-radius:6px; background:#2563eb; color:#fff; font-size:12.5px; font-weight:600; cursor:pointer;">开启通知 + 测试声音</button>
-      <span id="notifyStatus" style="font-size:12px; color:#475569;"></span>
-    </div>
-
-    <!-- 执行回执面板 -->
-    <div id="receiptPanel" style="display:none; margin-bottom:14px; padding:12px 16px; border-radius:10px; background:#f8fafc; border:1px solid #e2e8f0;">
-      <div id="receiptHeader" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; cursor:pointer; user-select:none;" title="点击收起/展开">
-        <div style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13.5px; color:#0f172a;">
-          <span id="receiptToggle" style="font-size:11px; color:#94a3b8; display:inline-block; transition: transform 0.15s;">▾</span>
-          <span>📋 执行回执 · 最近状态</span>
-        </div>
-        <div id="receiptUpdated" style="font-size:11px; color:#94a3b8;"></div>
-      </div>
-      <div id="receiptList" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
 
     <!-- KPI Cards -->
@@ -880,260 +846,6 @@ document.querySelectorAll('.sidebar nav a').forEach(a => {
   apply();
 })();
 
-// ============ 通知开启按钮（一键授权 + 测试声音） ============
-(function() {
-  const btn = document.getElementById('enableNotifyBtn');
-  const statusEl = document.getElementById('notifyStatus');
-  if (!btn) return;
-  function playTestSound() {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AC();
-      [0, 0.3, 0.6].forEach((t, i) => {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = 1319 + i * 200;
-        g.gain.setValueAtTime(0.2, ctx.currentTime + t);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.6);
-        osc.connect(g); g.connect(ctx.destination);
-        osc.start(ctx.currentTime + t); osc.stop(ctx.currentTime + t + 0.65);
-      });
-    } catch(e) {}
-  }
-  function updateStatus() {
-    if (!('Notification' in window)) { statusEl.textContent = '此浏览器不支持通知'; return; }
-    if (Notification.permission === 'granted') {
-      statusEl.textContent = '✓ 已开启，可收到系统通知';
-      btn.textContent = '🔊 再测一次声音';
-    } else if (Notification.permission === 'denied') {
-      statusEl.textContent = '已拒绝——请在浏览器设置允许本站通知（edge://settings/content/notifications）';
-      btn.textContent = '去浏览器设置';
-    } else {
-      statusEl.textContent = '未授权（点击按钮授权）';
-    }
-  }
-  btn.addEventListener('click', function() {
-    playTestSound();
-    if (!('Notification' in window)) { updateStatus(); return; }
-    if (Notification.permission === 'default') {
-      Notification.requestPermission().then(function(p) {
-        if (p === 'granted') {
-          try { new Notification('盯盘通知已开启', { body: '以后触发操作线时，会在这里提醒你' }); } catch(e) {}
-        }
-        updateStatus();
-      });
-    } else if (Notification.permission === 'denied') {
-      updateStatus();
-    } else {
-      updateStatus();
-    }
-  });
-  updateStatus();
-})();
-
-// ============ 盯盘提醒轮询（响铃 + 系统通知 + 顶部横幅） ============
-(function() {
-  const banner = document.getElementById('alertBanner');
-  const pollMs = 30000;
-  let seen = {};
-  try { seen = JSON.parse(localStorage.getItem('wb_alert_seen') || '{}'); } catch(e) {}
-  function save() { localStorage.setItem('wb_alert_seen', JSON.stringify(seen)); }
-  function playSound() {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AC();
-      [0, 0.35, 0.7].forEach((t, i) => {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = i === 1 ? 'triangle' : 'sine';
-        osc.frequency.value = i === 2 ? 1568 : 1319;
-        g.gain.setValueAtTime(0.25, ctx.currentTime + t);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.9);
-        osc.connect(g); g.connect(ctx.destination);
-        osc.start(ctx.currentTime + t); osc.stop(ctx.currentTime + t + 0.95);
-      });
-    } catch(e) {}
-  }
-  function notify(title, body) {
-    try {
-      if ('Notification' in window) {
-        if (Notification.permission === 'granted') {
-          new Notification(title, { body, tag: 'wb-alert' });
-        } else if (Notification.permission === 'default') {
-          Notification.requestPermission();
-        }
-      }
-    } catch(e) {}
-    if (banner) {
-      banner.style.display = 'block';
-      banner.textContent = '🔔 ' + title + ' — ' + body;
-    }
-  }
-  function poll() {
-    fetch('alerts.json?t=' + Date.now(), { cache: 'no-store' })
-      .then(r => r.json())
-      .then(d => {
-        if (!d || !Array.isArray(d.alerts) || d.alerts.length === 0) return;
-        const newest = d.alerts[0];
-        if (!newest || !newest.id) return;
-        if (seen[newest.id]) return;
-        seen[newest.id] = 1; save();
-        playSound();
-        notify(newest.title || '盯盘提醒', newest.body || '');
-      })
-      .catch(() => {});
-  }
-  poll();
-  setInterval(poll, pollMs);
-})();
-
-// ============ 执行回执面板（读取 receipts.json，异常红色+响铃） ============
-(function() {
-  const panel = document.getElementById('receiptPanel');
-  const listEl = document.getElementById('receiptList');
-  const updatedEl = document.getElementById('receiptUpdated');
-  const banner = document.getElementById('alertBanner');
-  if (!panel || !listEl) return;
-  const badgeColor = { '成功':'#10b981', '接近触发':'#d97706', '已触发':'#dc2626', '异常':'#dc2626' };
-  const badgeBg    = { '成功':'#ecfdf5', '接近触发':'#fffbeb', '已触发':'#fef2f2', '异常':'#fef2f2' };
-  let seenEx = {};
-  try { seenEx = JSON.parse(localStorage.getItem('wb_ex_alert') || '{}'); } catch(e) {}
-  function saveEx() { localStorage.setItem('wb_ex_alert', JSON.stringify(seenEx)); }
-  function playExSound() {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AC();
-      [0, 0.35, 0.7].forEach((t, i) => {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = i === 2 ? 1245 : 988;
-        g.gain.setValueAtTime(0.22, ctx.currentTime + t);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.6);
-        osc.connect(g); g.connect(ctx.destination);
-        osc.start(ctx.currentTime + t); osc.stop(ctx.currentTime + t + 0.65);
-      });
-    } catch(e) {}
-  }
-  function render() {
-    fetch('receipts.json?t=' + Date.now(), { cache: 'no-store' })
-      .then(r => r.json())
-      .then(d => {
-        if (!d || !Array.isArray(d.receipts) || d.receipts.length === 0) { panel.style.display = 'none'; return; }
-        panel.style.display = 'block';
-        updatedEl.textContent = '更新于 ' + (d.updated || '');
-         // 仅显示「每日收盘后审核版」（15:20 收盘确认），最近 3 天；其他 slot 保留在文件不在面板展示
-        const cutoff = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10);
-        const items = d.receipts.filter(r => {
-          const isClose = (r.id && (r.id.includes('1515') || r.id.includes('1520'))) || (r.slot && r.slot.includes('收盘确认'));
-          if (!isClose) return false;
-          const dStr = (r.ts || '').slice(0, 10);
-          return dStr >= cutoff;
-        }).slice(0, 5);
-        if (items.length === 0) { panel.style.display = 'none'; return; }
-        listEl.innerHTML = items.map(r => {
-          const color = badgeColor[r.status] || '#64748b';
-          const bg = badgeBg[r.status] || '#f1f5f9';
-          return '<div style="display:flex; align-items:flex-start; gap:10px; font-size:12.5px; border-left:3px solid ' + color + '; background:#fff; padding:8px 10px; border-radius:6px;">' +
-            '<span style="flex:0 0 auto; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; color:' + color + '; background:' + bg + ';">' + (r.status || '') + '</span>' +
-            '<span style="flex:0 0 auto; color:#64748b; font-size:11px; padding-top:1px;">' + (r.ts || '') + '</span>' +
-            '<span style="flex:0 0 auto; color:#0f172a; font-weight:600; padding-top:1px;">' + (r.slot || '') + '</span>' +
-            '<span style="flex:1 1 auto; color:#475569; padding-top:1px;">' + (r.summary || '') + '</span>' +
-          '</div>';
-        }).join('');
-        // 最新可见回执为「异常」或「已触发」→ 响铃 + 横幅提醒（去重，仅对审核版触发）
-        const newest = items[0];
-        if (newest && newest.id && (newest.status === '异常' || newest.status === '已触发')) {
-          if (!seenEx[newest.id]) {
-            seenEx[newest.id] = 1; saveEx();
-            playExSound();
-            if (banner) {
-              banner.style.display = 'block';
-              banner.textContent = '⚠️ ' + (newest.slot || '执行回执') + ' — ' + (newest.summary || '请查看');
-            }
-          }
-        }
-      })
-      .catch(() => {});
-  }
-  render();
-  setInterval(render, 60000);
-})();
-
-// ============ 执行回执面板：点击标题收起/展开 ============
-(function() {
-  const header = document.getElementById('receiptHeader');
-  const toggle = document.getElementById('receiptToggle');
-  const listEl = document.getElementById('receiptList');
-  if (!header || !listEl) return;
-  let collapsed = false;
-  try { collapsed = localStorage.getItem('wb_receipt_collapsed') === '1'; } catch(e) {}
-  function apply() {
-    listEl.style.display = collapsed ? 'none' : 'flex';
-    if (toggle) toggle.textContent = collapsed ? '▸' : '▾';
-    header.title = collapsed ? '点击展开' : '点击收起';
-  }
-  header.addEventListener('click', function() {
-    collapsed = !collapsed;
-    try { localStorage.setItem('wb_receipt_collapsed', collapsed ? '1' : '0'); } catch(e) {}
-    apply();
-  });
-  apply();
-})();
-
-// ============ 历史交易与资金进出明细（读取 trades.json） ============
-(function() {
-  const tbody = document.getElementById('tradeBody');
-  const updatedEl = document.getElementById('tradeUpdated');
-  if (!tbody) return;
-  const actStyle = { '买入':'#dc2626', '卖出':'#059669', '提现':'#64748b', '定投买入':'#6366f1' };
-  const actBg    = { '买入':'#fef2f2', '卖出':'#ecfdf5', '提现':'#f8fafc', '定投买入':'#eef2ff' };
-  // 价格显示：基金净值(小)保留4位，股票价格(大)保留2位
-  function fmtPrice(p) {
-    if (p === null || p === undefined) return '—';
-    return p < 10 ? p.toFixed(4) : p.toFixed(2);
-  }
-  function renderTrades() {
-    fetch('trades.json?t=' + Date.now(), { cache: 'no-store' })
-      .then(r => r.json())
-      .then(d => {
-        if (!d || !Array.isArray(d.trades) || d.trades.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:18px;">暂无交易记录</td></tr>';
-          return;
-        }
-        if (updatedEl) updatedEl.textContent = '更新于 ' + (d.updated || '');
-        tbody.innerHTML = d.trades.map(t => {
-          const c = actStyle[t.action] || '#64748b';
-          const bg = actBg[t.action] || '#f1f5f9';
-          const nameHtml = t.code ? nameCell(t.name, t.code, t.code.length === 6 && /^(0|1|5|6)/.test(t.code) ? '基金' : '股票') : '<div class="nm">' + t.name + '</div>';
-          const rGain = t.realizedGain;
-          const rgHtml = rGain === null || rGain === undefined
-            ? '<span style="color:#cbd5e1;">—</span>'
-            : '<span style="color:' + (rGain >= 0 ? '#dc2626' : '#059669') + '; font-weight:600;">' + fmt(rGain) + '</span>';
-          const amtHtml = t.action === '提现'
-            ? '<span style="color:#64748b;">出金 ' + fmt(t.amount) + '</span>'
-            : fmt(t.amount);
-          return '<tr>' +
-            '<td style="white-space:nowrap;">' + t.date + '</td>' +
-            '<td><span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; color:' + c + '; background:' + bg + ';">' + t.action + '</span></td>' +
-            '<td>' + nameHtml + (t.code ? '<div class="code">' + t.code + '</div>' : '') + '</td>' +
-            '<td>' + fmtPrice(t.price) + '</td>' +
-            '<td>' + (t.quantity !== null && t.quantity !== undefined ? Number(t.quantity).toLocaleString() : '—') + '</td>' +
-            '<td style="font-weight:600;">' + amtHtml + '</td>' +
-            '<td>' + rgHtml + '</td>' +
-            '<td style="text-align:left; font-size:11.5px; color:#64748b; min-width:200px; max-width:340px; line-height:1.5;">' + (t.note || '') + '</td>' +
-          '</tr>';
-        }).join('');
-      })
-      .catch(() => {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:18px;">trades.json 加载失败</td></tr>';
-      });
-  }
-  renderTrades();
-  setInterval(renderTrades, 120000);
-})();
-
 // ============ 每日操作单（读取 advice.json，仅渲染最近3个交易日收盘审核版） ============
 (function() {
   const listEl = document.getElementById('adviceList');
@@ -1150,7 +862,7 @@ document.querySelectorAll('.sidebar nav a').forEach(a => {
           return;
         }
         if (updatedEl) updatedEl.textContent = '更新于 ' + (d.updated || '');
-        const items = d.advice.slice(0, 3); // 仅最近3个交易日
+        const items = d.advice.filter(a => a.status === '已确认生效').slice(0, 1); // 仅已确认生效最新一条
         listEl.innerHTML = items.map(a => {
           const c = badgeColor[a.status] || '#64748b';
           const bg = badgeBg[a.status] || '#f1f5f9';

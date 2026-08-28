@@ -7,4 +7,9 @@ if ($LASTEXITCODE -eq 0) {
 }
 git commit -m "kanban daily publish"
 git push
-Write-Host "[kanban-publish] pushed"
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "[kanban-publish] pushed OK"
+} else {
+    Write-Host "[kanban-publish] push FAILED"
+    exit 1
+}
