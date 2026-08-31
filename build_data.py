@@ -11,8 +11,8 @@ def load(name):
     with io.open(os.path.join(BASE, name), encoding='utf-8') as f:
         return json.load(f)
 
-# ---------- 持仓快照（名称/代码/类别/数量/成本/现值/浮盈/盈率/当日/累计/近1月/近6月/占比） ----------
-holdings = [
+# ---------- 持仓快照（优先读 holdings_snapshot.json，由 15:40/20:30 任务更新；缺失用内嵌静态） ----------
+_STATIC_HOLDINGS = [
     {"name":"工银瑞信新兴制造A","code":"009707","type":"基金","quantity":48000,  "cost":300000.00,"value":231076.80,"gain":-68923.20,"gainRate":-22.97,"dayGain":0,    "cumGain":203265.83,"m1":-8.88,"m6":43.56,"ratio":24.6},
     {"name":"股票账户现金",      "code":"-",    "type":"现金","quantity":None,   "cost":139173.59,"value":139173.59,"gain":0,       "gainRate":0,     "dayGain":0,    "cumGain":0,       "m1":None, "m6":None, "ratio":15.2},
     {"name":"洛阳钼业",          "code":"603993","type":"股票","quantity":6800,   "cost":130587.49,"value":132668.00,"gain":2080.51,  "gainRate":1.59,  "dayGain":-544.00,"cumGain":19403.51,"m1":2.96, "m6":-18.30,"ratio":14.1},
@@ -25,6 +25,20 @@ holdings = [
     {"name":"兴业银锡",          "code":"000426","type":"股票","quantity":1200,   "cost":47880.00, "value":48828.00, "gain":948.00,   "gainRate":1.98,  "dayGain":540.00, "cumGain":0,      "m1":None, "m6":None, "ratio":5.2},
     {"name":"中国铝业",          "code":"601600","type":"股票","quantity":1600,   "cost":16169.60, "value":15440.00, "gain":-729.60,  "gainRate":-4.51, "dayGain":96.00,  "cumGain":-1589.16,"m1":4.87, "m6":-27.71,"ratio":1.6},
 ]
+
+def load_holdings():
+    snap = os.path.join(BASE, "holdings_snapshot.json")
+    if os.path.exists(snap):
+        try:
+            with io.open(snap, encoding="utf-8") as f:
+                s = json.load(f)
+            if s.get("holdings"):
+                return s["holdings"]
+        except Exception:
+            pass
+    return _STATIC_HOLDINGS
+
+holdings = load_holdings()
 
 totalCost = round(sum(h["cost"] for h in holdings), 2)
 totalValue = round(sum(h["value"] for h in holdings), 2)

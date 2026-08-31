@@ -1,4 +1,7 @@
 $ErrorActionPreference = 'SilentlyContinue'
+# 1) 重新生成 data.json（合并最新 fund_nav/trades/advice + 内嵌快照）
+python build_data.py
+# 2) 提交并推送
 git add -A
 git diff --cached --quiet
 if ($LASTEXITCODE -eq 0) {
