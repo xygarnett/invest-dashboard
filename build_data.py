@@ -11,7 +11,7 @@ def load(name):
     with io.open(os.path.join(BASE, name), encoding='utf-8') as f:
         return json.load(f)
 
-# ---------- 持仓快照（优先读 holdings_snapshot.json，由 15:40/20:30 任务更新；缺失用内嵌静态） ----------
+# ---------- 持仓快照（优先读 holdings_snapshot.json，由 16:45/20:30 任务更新；缺失用内嵌静态） ----------
 _STATIC_HOLDINGS = [
     {"name":"工银瑞信新兴制造A","code":"009707","type":"基金","quantity":48000,  "cost":300000.00,"value":231076.80,"gain":-68923.20,"gainRate":-22.97,"dayGain":0,    "cumGain":203265.83,"m1":-8.88,"m6":43.56,"ratio":24.6},
     {"name":"股票账户现金",      "code":"-",    "type":"现金","quantity":None,   "cost":139173.59,"value":139173.59,"gain":0,       "gainRate":0,     "dayGain":0,    "cumGain":0,       "m1":None, "m6":None, "ratio":15.2},
