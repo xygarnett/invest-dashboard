@@ -1,16 +1,16 @@
 {
   "meta": {
-    "updated": "2026-08-31",
-    "asOf": "2026-08-27 收盘快照 + 8/31 现金修正",
+    "updated": "2026-09-03",
+    "asOf": "2026-09-03 收盘快照 + 9/3 基金净值（建信 QDII 9/2）",
     "market": "A股 · 已收盘"
   },
   "summary": {
     "totalCost": 958097.93,
-    "totalValue": 894980.41,
-    "totalGain": -63117.52,
+    "totalValue": 894989.51,
+    "totalGain": -63108.42,
     "totalRate": -6.59,
     "realizedGain": 6361.96,
-    "totalCombined": -56755.56,
+    "totalCombined": -56746.46,
     "combinedRate": -5.92,
     "holdingsCount": 11
   },
@@ -21,9 +21,9 @@
       "type": "基金",
       "quantity": 48000,
       "cost": 300000.0,
-      "value": 224044.8,
-      "gain": -75955.2,
-      "gainRate": -25.32,
+      "value": 221836.8,
+      "gain": -78163.2,
+      "gainRate": -26.05,
       "dayGain": 0,
       "cumGain": 203265.83,
       "m1": -8.88,
@@ -51,10 +51,10 @@
       "type": "股票",
       "quantity": 6800,
       "cost": 130587.49,
-      "value": 125528.0,
-      "gain": -5059.49,
-      "gainRate": -3.87,
-      "dayGain": -4080.0,
+      "value": 126548.0,
+      "gain": -4039.49,
+      "gainRate": -3.09,
+      "dayGain": 1020.0,
       "cumGain": 19403.51,
       "m1": 2.96,
       "m6": -18.3,
@@ -66,10 +66,10 @@
       "type": "股票",
       "quantity": 2000,
       "cost": 60003.75,
-      "value": 65900.0,
-      "gain": 5896.25,
-      "gainRate": 9.83,
-      "dayGain": -1560.0,
+      "value": 66620.0,
+      "gain": 6616.25,
+      "gainRate": 11.03,
+      "dayGain": 720.0,
       "cumGain": 15838.21,
       "m1": 12.83,
       "m6": -16.46,
@@ -81,9 +81,9 @@
       "type": "基金",
       "quantity": 20000,
       "cost": 57356.0,
-      "value": 45224.0,
-      "gain": -12132.0,
-      "gainRate": -21.15,
+      "value": 45136.0,
+      "gain": -12220.0,
+      "gainRate": -21.31,
       "dayGain": 0,
       "cumGain": 3359.71,
       "m1": 3.86,
@@ -96,10 +96,10 @@
       "type": "股票",
       "quantity": 1200,
       "cost": 64270.5,
-      "value": 70020.0,
-      "gain": 5749.5,
-      "gainRate": 8.95,
-      "dayGain": -1752.0,
+      "value": 68844.0,
+      "gain": 4573.5,
+      "gainRate": 7.12,
+      "dayGain": -1176.0,
       "cumGain": 8869.5,
       "m1": 31.87,
       "m6": 5.5,
@@ -111,9 +111,9 @@
       "type": "基金",
       "quantity": 16613.79,
       "cost": 59500.0,
-      "value": 67784.26,
-      "gain": 8284.26,
-      "gainRate": 13.92,
+      "value": 68016.86,
+      "gain": 8516.86,
+      "gainRate": 14.31,
       "dayGain": 0,
       "cumGain": 16734.27,
       "m1": 2.99,
@@ -126,9 +126,9 @@
       "type": "基金",
       "quantity": 18752.9,
       "cost": 29000.0,
-      "value": 43731.76,
-      "gain": 14731.76,
-      "gainRate": 50.8,
+      "value": 43694.26,
+      "gain": 14694.26,
+      "gainRate": 50.67,
       "dayGain": 0,
       "cumGain": 15215.24,
       "m1": -1.35,
@@ -141,10 +141,10 @@
       "type": "股票",
       "quantity": 1000,
       "cost": 54157.0,
-      "value": 52590.0,
-      "gain": -1567.0,
-      "gainRate": -2.89,
-      "dayGain": -1150.0,
+      "value": 52300.0,
+      "gain": -1857.0,
+      "gainRate": -3.43,
+      "dayGain": -290.0,
       "cumGain": 46406.45,
       "m1": -11.97,
       "m6": 5.65,
@@ -156,10 +156,10 @@
       "type": "股票",
       "quantity": 1200,
       "cost": 47880.0,
-      "value": 45624.0,
-      "gain": -2256.0,
-      "gainRate": -4.71,
-      "dayGain": -1512.0,
+      "value": 47124.0,
+      "gain": -756.0,
+      "gainRate": -1.58,
+      "dayGain": 1500.0,
       "cumGain": 0,
       "m1": null,
       "m6": null,
@@ -171,10 +171,10 @@
       "type": "股票",
       "quantity": 1600,
       "cost": 16169.6,
-      "value": 15360.0,
-      "gain": -809.6,
-      "gainRate": -5.01,
-      "dayGain": -304.0,
+      "value": 15696.0,
+      "gain": -473.6,
+      "gainRate": -2.93,
+      "dayGain": 336.0,
       "cumGain": -1589.16,
       "m1": 4.87,
       "m6": -27.71,
@@ -846,6 +846,10 @@
         {
           "date": "2026-09-02",
           "nav": 2.2612
+        },
+        {
+          "date": "2026-09-03",
+          "nav": 2.2568
         }
       ]
     },
@@ -1047,6 +1051,10 @@
         {
           "date": "2026-09-01",
           "nav": 2.332
+        },
+        {
+          "date": "2026-09-02",
+          "nav": 2.33
         }
       ]
     },
@@ -1248,6 +1256,10 @@
         {
           "date": "2026-09-02",
           "nav": 4.6676
+        },
+        {
+          "date": "2026-09-03",
+          "nav": 4.6216
         }
       ]
     },
@@ -1449,6 +1461,10 @@
         {
           "date": "2026-09-02",
           "nav": 4.08
+        },
+        {
+          "date": "2026-09-03",
+          "nav": 4.094
         }
       ]
     }

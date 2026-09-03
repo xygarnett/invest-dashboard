@@ -100,8 +100,8 @@ advice = load("advice.json").get("advice", [])
 
 data = {
     "meta": {
-        "updated": "2026-08-31",
-        "asOf": "2026-08-27 收盘快照 + 8/31 现金修正",
+        "updated": "2026-09-03",
+        "asOf": "2026-09-03 收盘快照 + 9/3 基金净值（建信 QDII 9/2）",
         "market": "A股 · 已收盘",
     },
     "summary": {
