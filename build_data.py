@@ -14,11 +14,11 @@ def load(name):
 # ---------- 持仓快照（优先读 holdings_snapshot.json，由 16:45/20:30 任务更新；缺失用内嵌静态） ----------
 _STATIC_HOLDINGS = [
     {"name":"工银瑞信新兴制造A","code":"009707","type":"基金","quantity":48000,  "cost":300000.00,"value":231076.80,"gain":-68923.20,"gainRate":-22.97,"dayGain":0,    "cumGain":203265.83,"m1":-8.88,"m6":43.56,"ratio":24.6},
-    {"name":"股票账户现金",      "code":"-",    "type":"现金","quantity":None,   "cost":139173.59,"value":139173.59,"gain":0,       "gainRate":0,     "dayGain":0,    "cumGain":0,       "m1":None, "m6":None, "ratio":15.2},
+    {"name":"股票账户现金",      "code":"-",    "type":"现金","quantity":None,   "cost":162035.29,"value":162035.29,"gain":0,       "gainRate":0,     "dayGain":0,    "cumGain":0,       "m1":None, "m6":None, "ratio":15.2},
     {"name":"洛阳钼业",          "code":"603993","type":"股票","quantity":6800,   "cost":130587.49,"value":132668.00,"gain":2080.51,  "gainRate":1.59,  "dayGain":-544.00,"cumGain":19403.51,"m1":2.96, "m6":-18.30,"ratio":14.1},
     {"name":"紫金矿业",          "code":"601899","type":"股票","quantity":2000,   "cost":60003.75, "value":69140.00, "gain":9136.25,  "gainRate":15.23, "dayGain":200.00, "cumGain":15838.21,"m1":12.83,"m6":-16.46,"ratio":7.4},
     {"name":"金鹰核心资源",      "code":"210009","type":"基金","quantity":34870.20,"cost":100000.00,"value":76763.26, "gain":-23236.74,"gainRate":-23.24,"dayGain":0,    "cumGain":3359.71, "m1":3.86, "m6":-20.79,"ratio":8.2},
-    {"name":"中国稀土",          "code":"000831","type":"股票","quantity":1200,   "cost":64270.50, "value":72972.00, "gain":8701.50,  "gainRate":13.54, "dayGain":5736.00,"cumGain":8869.50, "m1":31.87,"m6":5.50, "ratio":7.8},
+    {"name":"中国稀土",          "code":"000831","type":"股票","quantity":800,    "cost":42847.00, "value":44968.00, "gain":2121.00,  "gainRate":4.95,  "dayGain":-928.00,"cumGain":8869.50, "m1":31.87,"m6":5.50, "ratio":5.1},
     {"name":"景顺策略精选",      "code":"000242","type":"基金","quantity":12000,  "cost":40000.00, "value":50220.00, "gain":10220.00, "gainRate":25.55, "dayGain":0,    "cumGain":16734.27,"m1":2.99, "m6":8.69, "ratio":5.3},
     {"name":"建信新兴市场",      "code":"539002","type":"基金","quantity":18752.90,"cost":29000.00, "value":43788.02, "gain":14788.02, "gainRate":50.99, "dayGain":0,    "cumGain":15215.24,"m1":-1.35,"m6":44.30,"ratio":4.6},
     {"name":"南大光电",          "code":"300346","type":"股票","quantity":1000,   "cost":54157.00, "value":56610.00, "gain":2453.00,  "gainRate":4.53,  "dayGain":2140.00,"cumGain":46406.45,"m1":-11.97,"m6":5.65,"ratio":6.0},
@@ -44,7 +44,7 @@ totalCost = round(sum(h["cost"] for h in holdings), 2)
 totalValue = round(sum(h["value"] for h in holdings), 2)
 totalGain = round(totalValue - totalCost, 2)
 totalRate = round(totalGain / totalCost * 100, 2) if totalCost else 0
-realizedGain = 6361.96
+realizedGain = 7800.16
 totalCombined = round(totalGain + realizedGain, 2)
 combinedRate = round(totalCombined / totalCost * 100, 2) if totalCost else 0
 
@@ -65,7 +65,7 @@ brokerYearly = {
 stockCostRef = [
     {"name":"洛阳钼业","code":"603993","qty":6800,"costPrice":19.2040,"breakeven":16.99,  "breakevenNote":"未含税费","last":19.51},
     {"name":"紫金矿业","code":"601899","qty":2000,"costPrice":30.0019,"breakeven":25.7720,"breakevenNote":"未含税费·净分红","last":34.57},
-    {"name":"中国稀土","code":"000831","qty":1200,"costPrice":53.5588,"breakeven":None,   "breakevenNote":"流水缺失","last":60.81},
+    {"name":"中国稀土","code":"000831","qty":800,"costPrice":53.5588,"breakeven":None,   "breakevenNote":"流水缺失","last":60.81},
     {"name":"南大光电","code":"300346","qty":1000,"costPrice":54.1570,"breakeven":54.14,  "breakevenNote":"未含税费·8/5前流水缺失","last":56.61},
     {"name":"兴业银锡","code":"000426","qty":1200,"costPrice":39.9000,"breakeven":None,   "breakevenNote":"流水缺失·8/25新建仓","last":40.69},
     {"name":"中国铝业","code":"601600","qty":1600,"costPrice":10.1060,"breakeven":None,   "breakevenNote":"流水缺失","last":9.65},
@@ -100,8 +100,8 @@ advice = load("advice.json").get("advice", [])
 
 data = {
     "meta": {
-        "updated": "2026-09-03",
-        "asOf": "2026-09-03 收盘快照 + 9/3 基金净值（建信 QDII 9/2）",
+        "updated": "2026-09-04",
+        "asOf": "2026-09-04 股票收盘(灵犀16:05) + 9/3 基金净值（建信 QDII 9/2）",
         "market": "A股 · 已收盘",
     },
     "summary": {
