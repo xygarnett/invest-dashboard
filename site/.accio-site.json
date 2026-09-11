@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "siteId": "8aar5qkvqekejspz",
+  "name": "tim-invest-dashboard",
+  "kind": "react-vite",
+  "devCommand": "vite",
+  "buildCommand": "vite build",
+  "outputDir": "dist",
+  "entry": "index.html",
+  "createdBy": "accio-site-builder",
+  "createdAt": "2026-09-11T09:38:00.620Z",
+  "siteIdSyncStatus": "synced",
+  "installedAt": "2026-09-11T10:18:53.530Z",
+  "databaseUrl": ""
+}
