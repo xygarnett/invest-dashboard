@@ -1,106 +1,103 @@
 import React, { useState } from 'react';
-import { fmtPct, daysBetween, tone, isNil } from '../lib/format.jsx';
+import { fmtPct, DateChip, isNil, WarnIcon } from '../lib/format.jsx';
+import { fundNavDates } from './Overview.jsx';
 
-// 有效操作单口径：状态须为「已确认生效 / 生效」，且批次日期距最新数据日不超过 MAX_AGE 天。
-// 不做任何自动延长；超期即视为历史。
+/* 操作单有效性：只读上游 status 原值，不做任何日期推算、不自动延长有效期。
+   上游 advice.json 明确的状态枚举为 已确认生效/生效/接近触发/已触发/待复核，
+   其中只有「已确认生效」「生效」表示生效；status 缺失时显示「待复核」。 */
 const EFFECTIVE_STATUS = ['已确认生效', '生效'];
-const MAX_AGE_DAYS = 3;
-
-const badgeStyle = (status) => {
-  if (EFFECTIVE_STATUS.includes(status)) return { background: '#ecfdf5', color: '#047857' };
-  if (String(status || '').includes('待')) return { background: '#fef3c7', color: '#b45309' };
-  return { background: '#f1f5f9', color: '#64748b' };
+const isEffective = (st) => EFFECTIVE_STATUS.includes(String(st || '').trim());
+const statusLabel = (st) => {
+  const s = String(st || '').trim();
+  return s || '待复核';
+};
+const statusClass = (st) => {
+  if (isEffective(st)) return 'st-effective';
+  if (String(st || '').includes('待') || !String(st || '').trim()) return 'st-pending';
+  return 'st-other';
 };
 
 export function AdviceRisk({ data }) {
-  const advice = data.advice || [];
+  const advice = [...(data.advice || [])].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
   const meta = data.meta || {};
-  const asOf = meta.updated;
   const rows = data.holdings || [];
   const s = data.summary || {};
 
-  const effective = advice.filter((a) => EFFECTIVE_STATUS.includes(a.status));
-  const graded = effective.filter((a) => {
-    const d = daysBetween(a.date, asOf);
-    return d !== null && d <= MAX_AGE_DAYS;
-  });
-  const current = graded[0] || null;
-  const staleEffective = !current && effective.length ? effective[0] : null;
-
+  const latest = advice[0] || null;
+  const history = advice.slice(1);
   const [showHistory, setShowHistory] = useState(false);
-  const history = advice.filter((a) => !current || a.date !== current.date);
 
-  // ---- 风险提示（全部由既有数据推导，缺失即标—） ----
+  // ---- 风险提示（全部由既有数据推导，缺失即标 —；不使用 Emoji） ----
   const risks = [];
   const snap = /券商台账\s*(\d{4}-\d{2}-\d{2})/.exec(meta.asOf || '');
   if (snap) {
     risks.push({
-      ic: '⚠️',
+      ic: 'warn',
       t: '数据时效',
       d: `持仓数量/成本与现金为券商台账 ${snap[1]}；当日权益与成交未回传，正式交易数量以数据源为准。`,
     });
   }
+  const navDates = fundNavDates(rows);
   risks.push({
-    ic: '⚠️',
-    t: '基金净值日期缺失',
-    d: '看板数据未包含基金净值日期，基金当日收益按「—」处理、不计入当日盈亏，避免把「未更新」误当零收益。',
+    ic: 'warn',
+    t: '基金净值日期',
+    d: navDates
+      ? `基金净值日期为 ${navDates}（各基金取值可能不同，来源于计算当前市值所用的同一条净值记录）；基金当日盈亏不计入「股票当日盈亏」，避免把「未更新」当成零收益。`
+      : '看板未取得基金净值日期，基金当日收益按「—」处理且不计入当日盈亏，避免把「未更新」当成零收益。',
   });
   const pnlRows = rows.filter((h) => !isNil(h.ratio) && h.type !== '现金');
   if (pnlRows.length) {
     const top = pnlRows.reduce((a, b) => (Number(a.ratio) >= Number(b.ratio) ? a : b));
-    risks.push({ ic: 'ⓘ', t: '集中度', d: `单一标的最大占比 ${Number(top.ratio).toFixed(1)}%（${top.name}）。`, info: true });
+    risks.push({ ic: 'warn', t: '集中度', d: `单一标的最大占比 ${Number(top.ratio).toFixed(1)}%（${top.name}）。` });
   }
   const deepLoss = rows.filter((h) => !isNil(h.gainRate) && Number(h.gainRate) <= -20 && h.type !== '现金');
   if (deepLoss.length) {
     risks.push({
-      ic: '⚠️',
+      ic: 'warn',
       t: '浮亏超 20%',
       d: deepLoss.map((h) => `${h.name} ${fmtPct(h.gainRate)}`).join('、') + '（按持仓成本口径）。',
     });
   }
-  const pending = advice.find((a) => String(a.status || '').includes('待'));
-  if (pending) {
-    risks.push({ ic: '⏳', t: '待人工裁决', d: `${pending.date} 批次状态为「${pending.status}」，未自动执行、未自动延长有效期。` });
+  if (latest && !isEffective(latest.status)) {
+    risks.push({
+      ic: 'warn',
+      t: '操作单未确认生效',
+      d: `${latest.date} 批次上游状态为「${statusLabel(latest.status)}」，未自动执行、本页也不自行延长或判定有效期。`,
+    });
   }
 
   return (
-    <div className="card" id="adviceRisk">
+    <section className="card" id="adviceRisk">
       <div className="card-head">
-        <div className="card-title">
-          今日建议与风险 <span className="card-hint">· 仅有单据才视为「当前有效」</span>
-        </div>
+        <div className="card-title">今日建议与风险</div>
+        <div className="card-hint">状态与日期取自上游操作单，本页不做有效期判定</div>
       </div>
 
-      {current ? (
-        <div className="advice-item">
+      {latest ? (
+        <div className={'advice-item' + (isEffective(latest.status) ? '' : ' pending')}>
           <div className="advice-head">
-            <span className="advice-date">{current.date}</span>
-            <span className="advice-status advice-badge-current">{current.status}</span>
-            <span className="advice-version">{current.version}</span>
-            <span className="card-hint">当前有效</span>
+            <span className="advice-date">{latest.date}</span>
+            <span className={'advice-status ' + statusClass(latest.status)}>{statusLabel(latest.status)}</span>
+            {latest.version ? <span className="advice-version">{latest.version}</span> : null}
+            <span className="card-hint">
+              {isEffective(latest.status) ? '上游状态：生效' : '上游状态：未确认生效'}
+            </span>
           </div>
-          <div className="advice-summary">{current.summary}</div>
-          {current.plan ? <div className="advice-plan">执行要点：{current.plan}</div> : null}
+          <div className="advice-summary">{latest.summary}</div>
+          {latest.plan ? <div className="advice-plan">执行要点：{latest.plan}</div> : null}
         </div>
       ) : (
-        <div className="advice-none">
-          <div className="t">暂无有效建议</div>
-          <div>
-            有效期口径：状态须为「已确认生效／生效」，且批次日期距最新数据日（{asOf || '—'}）不超过 {MAX_AGE_DAYS} 个自然日。
-            {staleEffective
-              ? `最新一条「已确认生效」为 ${staleEffective.date}，距今 ${daysBetween(staleEffective.date, asOf)} 天，已超期，不再作为当前有效操作单。`
-              : '当前无任何「已确认生效」记录。'}
-          </div>
-          <div style={{ marginTop: 4 }}>系统不自动延长有效期；如需继续执行，请重新出具并确认新的操作单。</div>
-        </div>
+        <div className="advice-none">暂无操作单记录（上游 advice.json 为空）。</div>
       )}
 
-      <div style={{ marginTop: 16 }}>
-        <div className="card-title" style={{ fontSize: 14, marginBottom: 10 }}>风险提示</div>
+      <div className="sub-block">
+        <div className="sub-title">风险提示</div>
         <div className="risk-list">
           {risks.map((r, i) => (
-            <div className={'risk-item' + (r.info ? ' info' : '')} key={i}>
-              <span className="risk-ic">{r.ic}</span>
+            <div className="risk-item" key={i}>
+              <span className="risk-ic">
+                <WarnIcon />
+              </span>
               <span>
                 <span className="risk-t">{r.t}：</span>
                 {r.d}
@@ -108,32 +105,36 @@ export function AdviceRisk({ data }) {
             </div>
           ))}
         </div>
-        <div className="card-hint" style={{ marginTop: 8 }}>
-          以上为数据与流程状态提示，非投资建议。当前持仓盈亏合计 {fmtPct(s.totalRate)}。
-        </div>
+        <div className="note-line">以上为数据与流程状态提示，非投资建议。当前持仓盈亏合计 {fmtPct(s.totalRate)}。</div>
       </div>
 
-      <div style={{ marginTop: 16 }}>
-        <button className="link-btn" type="button" onClick={() => setShowHistory((v) => !v)}>
-          {showHistory ? '▾ 收起历史建议' : `▸ 查看历史建议（${history.length} 条，标注「历史／待复核」）`}
-        </button>
-        {showHistory ? (
-          <div style={{ marginTop: 10 }}>
-            {history.map((a) => (
-              <div className="advice-item hist" key={a.date}>
-                <div className="advice-head">
-                  <span className="advice-date">{a.date}</span>
-                  <span className="advice-status" style={badgeStyle(a.status)}>{a.status}</span>
-                  <span className="advice-version">{a.version}</span>
-                  <span className="advice-status advice-badge-hist">历史／待复核</span>
-                </div>
-                <div className="advice-summary">{a.summary}</div>
-                {a.plan ? <div className="advice-plan">执行要点：{a.plan}</div> : null}
-              </div>
-            ))}
-          </div>
-        ) : null}
+      <div className="date-chips">
+        <DateChip label="操作单最新批次" value={latest ? latest.date : '—'} warn={!latest} />
+        <DateChip label="看板数据更新" value={meta.updated || '—'} />
       </div>
-    </div>
+
+      {history.length ? (
+        <div className="sub-block">
+          <button className="link-btn" type="button" onClick={() => setShowHistory((v) => !v)}>
+            {showHistory ? '▾ 收起历史操作单' : `▸ 查看历史操作单（${history.length} 条，状态原样展示）`}
+          </button>
+          {showHistory ? (
+            <div className="advice-history">
+              {history.map((a) => (
+                <div className="advice-item hist" key={a.date + a.version}>
+                  <div className="advice-head">
+                    <span className="advice-date">{a.date}</span>
+                    <span className={'advice-status ' + statusClass(a.status)}>{statusLabel(a.status)}</span>
+                    {a.version ? <span className="advice-version">{a.version}</span> : null}
+                  </div>
+                  <div className="advice-summary">{a.summary}</div>
+                  {a.plan ? <div className="advice-plan">执行要点：{a.plan}</div> : null}
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
   );
 }
