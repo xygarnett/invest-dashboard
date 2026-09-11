@@ -11,5 +11,9 @@
   "createdAt": "2026-09-11T09:38:00.620Z",
   "siteIdSyncStatus": "synced",
   "installedAt": "2026-09-11T10:18:53.530Z",
-  "databaseUrl": ""
+  "databaseUrl": "",
+  "subdomain": "tim-invest-dashboard",
+  "publishedUrl": "https://tim-invest-dashboard.site.accio.ai",
+  "publishedAt": "2026-09-11T10:59:26.590Z",
+  "deployId": "dep_1789124384866_a9776741"
 }

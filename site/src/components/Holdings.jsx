@@ -61,7 +61,10 @@ export function Holdings({ data }) {
   // 现金单列：不参与筛选，也不计入持仓数量（数量动态计算，无硬编码）
   const cash = all.find((h) => h.type === '现金') || null;
   const scoped = all.filter((h) => h.type !== '现金');
-  const types = [...new Set(scoped.map((h) => h.type))];
+  // 类别按钮顺序固定为「全部 / 股票 / 基金」，其余类别（如有）附加在后；数量始终由数据动态计算
+  const present = [...new Set(scoped.map((h) => h.type))];
+  const CANON = ['股票', '基金'];
+  const types = CANON.filter((t) => present.includes(t)).concat(present.filter((t) => !CANON.includes(t)));
   const filters = ['全部', ...types];
   const counts = filters.map((f) => ({
     f,
