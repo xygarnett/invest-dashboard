@@ -6343,5 +6343,619 @@
     "type": "年金险",
     "company": "友邦人寿",
     "status": "有效"
+  },
+  "extras": {
+    "marketColor": {
+      "freeze_date": "2026-09-11",
+      "effective_from": "2026-09-11",
+      "effective_until": "2026-09-18",
+      "color": "red",
+      "close_price": 5034.5281,
+      "ma20": 5145.4167,
+      "ma60": 5266.3873,
+      "ma20_5ago": 5183.3545,
+      "mom20": -0.038283,
+      "ret20": -0.038283,
+      "benchmark": "000906.SH",
+      "source": "tushare_pro 000906.SH index_daily 113交易日序列 20260401..20260911 派生；收盘5034.5281/MA20 5145.4167/MA60 5266.3873/MA20_5ago 5183.3545/mom20 -0.038283（close[20260911]/close[20260813]-1）；红光判定 (close<MA60 AND mom20<0) = True",
+      "data_time": "tushare_pro 000906.SH index_daily 113交易日序列 20260401..20260911 派生；收盘5034.5281/MA20 5145.4167/MA60 5266.3873/MA20_5ago 5183.3545/mom20 -0.038283（close[20260911]/close[20260813]-1）；红光判定 (close<MA60 AND mom20<0) = True",
+      "computed_at": "2026-09-11T17:33:45.161084+08:00",
+      "computed_by": "close_candidates_1830 补跑（Quality-First 市场色重算）"
+    },
+    "conditions": {
+      "updated_at": "2026-09-11 18:37",
+      "data_asof": "2026-09-11 收盘（market_snapshot trade_date=20260911 / generated_at=2026-09-11 18:08:51）；券商层 MISSING（holdings mtime=2026-09-09）",
+      "flags": {
+        "pending_exit": false,
+        "valid_v10_signal": false,
+        "rotation_day11_exit": false,
+        "cash_reallocation_due": false,
+        "corporate_action_review": false,
+        "broker_order_review": false
+      },
+      "last_cash_review_date": "2026-08-28",
+      "next_cash_review_date": "2026-09-14（顺延：需券商回传现金余额与可卖量）",
+      "resource": {
+        "res_strong": "provisional_true",
+        "calculated_cap": 65,
+        "effective_trade_cap": 55,
+        "effective_trade_cap_status": "pending_broker_verification",
+        "ma20": 9278.3824,
+        "ma20_prev": 9237.4199,
+        "ma60_final": 9010.5356,
+        "ma60_final_source": "iFinD index_data服务端(000819/截至8/31/周期60交易日/含8/31)，16:45运行已定唯一值",
+        "ma60_this_run": 9010.5356,
+        "ma60_note": "MA60唯一正式值=9010.5356（iFinD_server，60完整交易日含8/31）；9048.90/8868.82已作废，仅保留audit_history，禁止再列活动冲突",
+        "res_note": "五条件8/31全满足(calculated_cap=65)：000819收盘9403.98>MA20 9278.38>MA60 9010.5356、MA20向上(9237.42→9278.38)、20日超额+6.30pct(9.54%-3.24%)≥5pct、中证800近20日+3.24%>0、回撤-5.60%(iFinD估算口径)>-18%。券商权益未确认(回撤为估算)→res_strong=provisional_true、effective_trade_cap=55_pending_verification；不得按65%生成交易。资源占比(含兴业)63.19%<65%名义空间约¥9,570，但受红灯禁V10-D新增+现金再配置窗口未到(9/4)双重约束，实际无可执行新增",
+        "staleness": "数据截至 2026-08-31；000831/000426 已于 09-08 清仓 → 资源占比/名义空间口径已失效；本块数值不得用于交易。重算需商品指数(000819)当日数据与券商权益。",
+        "recompute_required": true,
+        "recompute_blocked_by": [
+          "broker 权益未回传",
+          "需 000819 当日收盘序列"
+        ]
+      },
+      "recent_audit": [
+        {
+          "ts": "2026-09-04 20:26",
+          "item": "XT-000831-SELL400-EXECUTED",
+          "signal_id": "XT-000831-SELL400",
+          "status": "executed",
+          "code": "000831",
+          "name": "中国稀土",
+          "detail": "卖出400股@57.20 已成交（10:30:38起）；净到账¥22,861.70（费用¥18.30）；已实现净盈利¥1,438.20；持仓1200→800股；现金139,173.59→162,035.29",
+          "signal_close": "原「卖400股复核」信号已执行并关闭，禁止重复触发",
+          "remainder": "剩余800股：16:45 按清仓线57.30（收盘<57.30）重新复核；60.90仅预警位；66/69-70档为盘中专项不适用"
+        },
+        {
+          "ts": "2026-08-31 18:50",
+          "item": "ZL-601600-10.15-ORDER-001",
+          "status": "obsolete_rule",
+          "replaced_by": "10.80_sell_50pct",
+          "old_record": {
+            "signal_id": "ZL-601600-10.15-ORDER-001",
+            "type": "broker_order_review",
+            "code": "601600",
+            "name": "中国铝业",
+            "side": "卖出",
+            "quantity": null,
+            "trigger_date": "2026-08-28",
+            "trigger_rule": "10.15全额退出限价未达（8/31最高9.78<10.15），订单状态待券商回传确认；行情达10.15仅提示核对券商订单，不推定成交",
+            "trigger_value": 10.15,
+            "valid_from": "2026-08-28",
+            "valid_until": "2026-09-04",
+            "status": "pending_chatgpt_review",
+            "signal": "invalid",
+            "filled": false,
+            "order": "待券商核验",
+            "origin_date": "2026-08-28",
+            "observation_date": "2026-08-31",
+            "high": 9.78,
+            "source_report": "C:\\Users\\EDY\\AccioWork\\2026-08-26-12-36-20-398-545eb39f\\工作区\\Finance管理_投资账本台\\自动任务\\reports\\2026-08-31-统一收盘回执-重跑.json",
+            "last_updated": "2026-08-31 18:47:00",
+            "note": "监控项（非交易信号）：未达10.15无成交，状态按允许集规范为pending_chatgpt_review（原invalid不在允许集）；broker_order_review=true"
+          },
+          "note": "旧10.15全额退出规则废止（2026-08-31）；9:31误报审计（当日最高9.78<10.15，iFinD 15:19）保留；不再要求券商核验成交；新规则见 zal_rule"
+        },
+        {
+          "ts": "2026-09-11 18:37",
+          "item": "CONDITION_STATE_CLEANUP_20260911",
+          "status": "done",
+          "detail": "已清仓标的活动条件归档：[('XY-V10D-20260908-EXIT-001', '000426', '兴业银锡')]；audit_history 既有条目未改动；601600 zal_rule 按 09-11 收盘刷新触发状态；资源块标注口径失效待重算；open_orders_status=MISSING（未知≠无委托）。",
+          "archived_items": [
+            "XY-V10D-20260908-EXIT-001"
+          ]
+        }
+      ]
+    },
+    "v11Sleeve": {
+      "schema": "v11-sleeve-ledger-v1",
+      "epoch_id": "V11-ST-EPOCH-20260911-01",
+      "scope": "POST_DEPLOYMENT_V11_ONLY_LEGACY_SEPARATE",
+      "created_at": "2026-09-11T18:37:20+08:00",
+      "capital_semantics": {
+        "ALLOCATION_LIMIT": {
+          "value_cny": 100000,
+          "meaning": "用户批准的 sleeve 资金上限（不代表资金划转）",
+          "evidence": "short_term_nav_approval_record.json approved_allocation"
+        },
+        "ACTUAL_EXTERNAL_FLOW": {
+          "total_cny": 0.0,
+          "meaning": "进入/离开 sleeve 的真实外部净资金流（入正出负）",
+          "evidence": "epoch 起始于批准时点，之前无 sleeve；起始观测 external_flow_cny=0"
+        },
+        "distinction_note": "ALLOCATION_LIMIT 是额度；ACTUAL_EXTERNAL_FLOW 是事实。两者不得互相代替，禁止用全账户历史入出金推算 sleeve 现金流。"
+      },
+      "observations": [
+        {
+          "epoch_id": "V11-ST-EPOCH-20260911-01",
+          "sequence": 0,
+          "as_of": "2026-09-11T18:29:26+08:00",
+          "equity_cny": 100000,
+          "external_flow_cny": 0,
+          "realized_pnl": 0,
+          "unrealized_pnl": 0,
+          "fees": 0,
+          "v11_position_value": 0,
+          "cash_component": 100000,
+          "source": "USER_APPROVED_ALLOCATION + broker_snapshot_manual(MISSING)",
+          "evidence": [
+            "short_term_nav_approval_record.json: sleeve_allocation_cny=100000, allocation_approved=true, allocation_review_id=V11-SLEEVE-APPROVAL-20260911-01, epoch_id=V11-ST-EPOCH-20260911-01, inception_at=2026-09-11T18:29:26+08:00",
+            "attribution check PASS：sleeve_equity(100000) <= cash_total(222730.54, 2026-09-09) + Σ v11 持仓(0)",
+            "v11 归属持仓 = 0（无合同 strategy_owner 记录；5 只既有持仓均为核心趋势存量，不计入）",
+            "epoch 内无成交、无费用、无浮动盈亏（实测状态，非推算）"
+          ],
+          "nav_effective": false,
+          "nav_effective_blocker": "broker_reconciled=false（合同硬门）；本行为台账起始记录，不代表 NAV 已通过校验"
+        },
+        {
+          "epoch_id": "V11-ST-EPOCH-20260911-01",
+          "sequence": 1,
+          "as_of": "2026-09-11T18:49:26+08:00",
+          "equity_cny": 100000.0,
+          "external_flow_cny": 0.0,
+          "realized_pnl": 0.0,
+          "unrealized_pnl": 0.0,
+          "fees": 0.0,
+          "v11_position_value": 0.0,
+          "cash_component": 100000.0,
+          "source": "nav_mark(300s, review-time mark) | 无 V11 持仓登记（V11 持仓市值=0，position mark 无需行情源）; broker available_cny=222741.82（用户确认 as_of=2026-09-11T18:45:00+08:00）→ 归因护栏 sleeve 100000.00 <= 222741.82：PASS",
+          "evidence": [
+            "sleeve 权益沿用台账（无成交/无现金流，权益不变）",
+            "券商现金归因护栏 PASS：100000.00 <= 222741.82",
+            "V11 持仓登记为空 → v11_position_value=0（Core/基金/其他策略资产未计入）"
+          ],
+          "nav_effective": true
+        }
+      ],
+      "gate_evidence": {
+        "allocation_approved": true,
+        "history_complete": true,
+        "cashflows_reconciled": true,
+        "fees_and_unrealized_included": true,
+        "broker_reconciled": true
+      }
+    },
+    "researchCandidates": {
+      "trade_date": "20260909",
+      "stats": {
+        "total": 4599,
+        "hard_filtered": 429,
+        "data_insufficient": 4,
+        "reject": 4093,
+        "a_potential": 72,
+        "s_potential": 5
+      },
+      "s_potential": [
+        {
+          "code": "000759",
+          "name": "中百集团",
+          "sector": 20,
+          "positive": 74,
+          "upper_bound": 84,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "300132",
+          "name": "诺斯贝尔",
+          "sector": 20,
+          "positive": 74,
+          "upper_bound": 84,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "300209",
+          "name": "行云科技",
+          "sector": 20,
+          "positive": 74,
+          "upper_bound": 84,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "600865",
+          "name": "百大集团",
+          "sector": 20,
+          "positive": 74,
+          "upper_bound": 84,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "601872",
+          "name": "招商轮船",
+          "sector": 20,
+          "positive": 74,
+          "upper_bound": 84,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 15
+        }
+      ],
+      "a_potential": [
+        {
+          "code": "000628",
+          "name": "高新发展",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "002011",
+          "name": "盾安环境",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "002155",
+          "name": "湖南黄金",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "600458",
+          "name": "时代新材",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "000978",
+          "name": "桂林旅游",
+          "sector": 20,
+          "positive": 68,
+          "upper_bound": 78,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 10,
+          "leader": 15
+        },
+        {
+          "code": "003006",
+          "name": "百亚股份",
+          "sector": 20,
+          "positive": 68,
+          "upper_bound": 78,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 10,
+          "leader": 15
+        },
+        {
+          "code": "600869",
+          "name": "远东股份",
+          "sector": 20,
+          "positive": 68,
+          "upper_bound": 78,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 10,
+          "leader": 15
+        },
+        {
+          "code": "000655",
+          "name": "金岭矿业",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "000690",
+          "name": "宝新能源",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "000993",
+          "name": "闽东电力",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "002040",
+          "name": "南京港",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "002046",
+          "name": "国机精工",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "002349",
+          "name": "精华制药",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "002652",
+          "name": "扬子新材",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "002905",
+          "name": "金逸影视",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "300577",
+          "name": "开润股份",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "301081",
+          "name": "严牌股份",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "301132",
+          "name": "满坤科技",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "600192",
+          "name": "长城电工",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "600255",
+          "name": "鑫科材料",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        }
+      ],
+      "top_a": [
+        {
+          "code": "000628",
+          "name": "高新发展",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "002011",
+          "name": "盾安环境",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "002155",
+          "name": "湖南黄金",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "600458",
+          "name": "时代新材",
+          "sector": 20,
+          "positive": 69,
+          "upper_bound": 79,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 15,
+          "volume": 16,
+          "leader": 15
+        },
+        {
+          "code": "000978",
+          "name": "桂林旅游",
+          "sector": 20,
+          "positive": 68,
+          "upper_bound": 78,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 10,
+          "leader": 15
+        },
+        {
+          "code": "003006",
+          "name": "百亚股份",
+          "sector": 20,
+          "positive": 68,
+          "upper_bound": 78,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 10,
+          "leader": 15
+        },
+        {
+          "code": "600869",
+          "name": "远东股份",
+          "sector": 20,
+          "positive": 68,
+          "upper_bound": 78,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 10,
+          "leader": 15
+        },
+        {
+          "code": "000655",
+          "name": "金岭矿业",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "000690",
+          "name": "宝新能源",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        },
+        {
+          "code": "000993",
+          "name": "闽东电力",
+          "sector": 20,
+          "positive": 67,
+          "upper_bound": 77,
+          "data_status": "完整",
+          "market": 3,
+          "stock": 20,
+          "volume": 16,
+          "leader": 8
+        }
+      ],
+      "truncated": {
+        "s_potential": 0,
+        "a_potential": 52
+      }
+    },
+    "researchCandidatesSource": "prefilter_result_20260909.json"
   }
 }

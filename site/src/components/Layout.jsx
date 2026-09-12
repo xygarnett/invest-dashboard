@@ -1,36 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { EyeIcon } from '../lib/format.jsx';
 
-export const NAV_ITEMS = [
-  { id: 'overview', label: '资产概览' },
-  { id: 'adviceRisk', label: '今日建议与风险' },
-  { id: 'holdings', label: '持仓明细' },
-  { id: 'allocAccount', label: '资产配置与账户摘要' },
-  { id: 'records', label: '成本参考及历史记录' },
-  { id: 'insurance', label: '保险' },
+/* 六项导航（用户原需求：总览/持仓/策略观察/交易与资金/收益分析/保险保障） */
+export const NAV = [
+  { id: 'overview', label: '总览' },
+  { id: 'holdings', label: '持仓' },
+  { id: 'strategy', label: '策略观察' },
+  { id: 'cashflow', label: '交易与资金' },
+  { id: 'returns', label: '收益分析' },
+  { id: 'insurance', label: '保险保障' },
 ];
 
-function go(id) {
-  const el = document.getElementById(id);
-  if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+/* hash 路由：仅切换视图，不新增发布入口 */
+export const useRoute = () => {
+  const read = () => {
+    const h = String(window.location.hash || '').replace(/^#\/?/, '').trim();
+    return NAV.some((n) => n.id === h) ? h : 'overview';
+  };
+  const [route, setRoute] = useState(read);
+  useEffect(() => {
+    const on = () => setRoute(read());
+    window.addEventListener('hashchange', on);
+    if (!window.location.hash) window.location.hash = '#/overview';
+    return () => window.removeEventListener('hashchange', on);
+  }, []);
+  const go = (id) => {
+    window.location.hash = '#/' + id;
+    setRoute(id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  return [route, go];
+};
 
-function EyeIcon({ off }) {
-  return (
-    <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true">
-      <path
-        fill="#4F46E5"
-        d="M10 4c-4 0-7.3 2.6-8.7 6 1.4 3.4 4.7 6 8.7 6s7.3-2.6 8.7-6c-1.4-3.4-4.7-6-8.7-6Zm0 1.6a4.4 4.4 0 1 1 0 8.8 4.4 4.4 0 0 1 0-8.8Zm0 1.7a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4Z"
-      />
-      {off ? <path stroke="#4F46E5" strokeWidth="1.6" d="M3 17 17 3" /> : null}
-    </svg>
-  );
-}
-
-export function Sidebar() {
+export function Sidebar({ route, go }) {
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState('overview');
-  const activeLabel = (NAV_ITEMS.find((n) => n.id === active) || NAV_ITEMS[0]).label;
-
+  const activeLabel = (NAV.find((n) => n.id === route) || NAV[0]).label;
   return (
     <aside className="sidebar">
       <div className="logo">
@@ -40,23 +44,20 @@ export function Sidebar() {
           <div className="logo-sub">投资账本台 · 蓝胖子点点</div>
         </div>
       </div>
-
       <button className="nav-toggle" type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
         <span>导航</span>
         <span className="cur">
           {activeLabel} {open ? '收起' : '展开'}
         </span>
       </button>
-
       <nav className={open ? 'open' : ''}>
-        {NAV_ITEMS.map((n) => (
+        {NAV.map((n) => (
           <a
             key={n.id}
-            href={'#' + n.id}
-            className={active === n.id ? 'active' : ''}
+            href={'#/' + n.id}
+            className={route === n.id ? 'active' : ''}
             onClick={(e) => {
               e.preventDefault();
-              setActive(n.id);
               setOpen(false);
               go(n.id);
             }}
@@ -69,29 +70,34 @@ export function Sidebar() {
   );
 }
 
-export function Header({ data, privacy, onTogglePrivacy }) {
+export function Header({ data, pageTitle, privacy, onTogglePrivacy }) {
   const meta = data.meta || {};
+  const color = (data.extras && data.extras.marketColor) || null;
   return (
     <div className="header">
       <div>
-        <h1>投资账本台</h1>
+        <h1>{pageTitle}</h1>
         <div className="greeting">
-          欢迎回来，蒂姆 <span className="dot-sep">·</span> 数据更新 {meta.updated || '—'}
+          数据更新 {meta.updated || '—'}
+          <span className="dot-sep">·</span>
+          {meta.market || '—'}
         </div>
       </div>
       <div className="header-right">
-        <span className="market-pill">
-          <span className="dot" />
-          {meta.market || '—'}
-        </span>
+        {color ? (
+          <span className={'market-pill ' + (String(color.color) === 'red' ? 'red' : 'green')}>
+            <span className="dot" />
+            市场光 {String(color.color) === 'red' ? '红' : '绿'} · {color.freeze_date || '—'}
+          </span>
+        ) : null}
         <button
           className={'privacy-btn' + (privacy ? ' on' : '')}
           type="button"
           onClick={onTogglePrivacy}
-          title={privacy ? '退出隐私模式' : '隐私模式（模糊金额）'}
+          title={privacy ? '退出隐藏金额' : '隐藏金额（卡片/表格/图表/详情）'}
         >
           <EyeIcon off={privacy} />
-          <span>{privacy ? '已隐藏' : '隐私'}</span>
+          <span>{privacy ? '已隐藏' : '隐藏金额'}</span>
         </button>
         <div className="avatar">蒂</div>
       </div>

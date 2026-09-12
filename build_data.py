@@ -124,6 +124,87 @@ try:
 except Exception as e:
     fail('../holdings.json 不可读或无 realizedGain: %s' % e)
 
+# ---------- 可选展示数据（缺失即置 None，**绝不阻断生成**；仅透传，不做任何推算） ----------
+# 用途：策略观察页（V11 候选/研究候选、市场色、条件状态）与持仓页 Core/V11 归属。
+# 这些文件由既有任务维护，本脚本只读不改；任一缺失只影响对应模块显示「暂无数据」。
+AUTO = os.path.join(ROOT, '自动任务')
+
+
+def opt_json(path):
+    try:
+        with io.open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def slim_conditions(c):
+    if not c:
+        return None
+    return {
+        'updated_at': c.get('updated_at'),
+        'data_asof': c.get('data_asof'),
+        'flags': {k: c.get(k) for k in (
+            'pending_exit', 'valid_v10_signal', 'rotation_day11_exit',
+            'cash_reallocation_due', 'corporate_action_review', 'broker_order_review')},
+        'last_cash_review_date': c.get('last_cash_review_date'),
+        'next_cash_review_date': c.get('next_cash_review_date'),
+        'resource': c.get('resource'),
+        'recent_audit': (c.get('audit_history') or [])[-3:],
+    }
+
+
+def slim_sleeve(s):
+    if not s:
+        return None
+    return {
+        'schema': s.get('schema'),
+        'epoch_id': s.get('epoch_id'),
+        'scope': s.get('scope'),
+        'created_at': s.get('created_at'),
+        'capital_semantics': s.get('capital_semantics'),
+        'observations': s.get('observations'),
+        'gate_evidence': {k: (v or {}).get('value') if isinstance(v, dict) else v
+                          for k, v in (s.get('gate_evidence') or {}).items()},
+    }
+
+
+def slim_research(r, s_max=10, a_max=20):
+    if not r:
+        return None
+    return {
+        'trade_date': r.get('trade_date'),
+        'stats': r.get('stats'),
+        's_potential': (r.get('s_potential') or [])[:s_max],
+        'a_potential': (r.get('a_potential') or [])[:a_max],
+        'top_a': (r.get('top_a') or [])[:a_max],
+        'truncated': {
+            's_potential': max(0, len(r.get('s_potential') or []) - s_max),
+            'a_potential': max(0, len(r.get('a_potential') or []) - a_max),
+        },
+    }
+
+
+import glob  # noqa: E402
+
+_cand_files = sorted(glob.glob(os.path.join(AUTO, 'prefilter_result_*.json')))
+_market_color = opt_json(os.path.join(AUTO, 'market_color.json'))
+_conditions = slim_conditions(opt_json(os.path.join(AUTO, 'condition_state.json')))
+_sleeve = slim_sleeve(opt_json(os.path.join(AUTO, 'v11_sleeve_ledger.json')))
+_research = slim_research(opt_json(_cand_files[-1])) if _cand_files else None
+
+extras = {
+    'marketColor': _market_color,
+    'conditions': _conditions,
+    'v11Sleeve': _sleeve,
+    'researchCandidates': _research,
+    'researchCandidatesSource': os.path.basename(_cand_files[-1]) if _cand_files else None,
+    'profitProtection': opt_json(os.path.join(AUTO, 'profit_protection_state.json')),
+}
+print('extras 可用性: marketColor=%s conditions=%s v11Sleeve=%s researchCandidates=%s(%s) profitProtection=%s' % (
+    bool(_market_color), bool(_conditions), bool(_sleeve), bool(_research),
+    extras['researchCandidatesSource'], bool(extras['profitProtection'])))
+
 # ---------- 汇总（由 holdings 计算，不信任预存 summary） ----------
 totalCost = round(sum(h['cost'] for h in holdings), 2)
 totalValue = round(sum(h['value'] for h in holdings), 2)
@@ -151,6 +232,7 @@ data = {
     'trades': trades,
     'advice': advice,
     'insurance': insurance,
+    'extras': extras,
 }
 
 out = os.path.join(BASE, 'data.json')

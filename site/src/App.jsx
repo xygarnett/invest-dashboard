@@ -1,108 +1,88 @@
 import React, { useEffect, useState } from 'react';
-import { Sidebar, Header, Footer } from './components/Layout.jsx';
-import { AssetCards, Allocation, AccountSummary } from './components/Overview.jsx';
-import { AdviceRisk } from './components/AdviceRisk.jsx';
-import { Holdings } from './components/Holdings.jsx';
-import { CostRef, BrokerYearly, PriceHistory, Trades } from './components/Records.jsx';
-import { Insurance } from './components/Insurance.jsx';
+import { Sidebar, Header, Footer, NAV, useRoute } from './components/Layout.jsx';
+import { OverviewPage } from './components/pages/Overview.jsx';
+import { HoldingsPage } from './components/pages/HoldingsPage.jsx';
+import { StrategyPage } from './components/pages/StrategyPage.jsx';
+import { CashFlowPage } from './components/pages/CashFlowPage.jsx';
+import { ReturnsPage } from './components/pages/ReturnsPage.jsx';
+import { InsurancePage } from './components/pages/InsurancePage.jsx';
+
+const PAGES = {
+  overview: OverviewPage,
+  holdings: HoldingsPage,
+  strategy: StrategyPage,
+  cashflow: CashFlowPage,
+  returns: ReturnsPage,
+  insurance: InsurancePage,
+};
 
 export default function App() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState(null);
-  const [privacy, setPrivacy] = useState(false);
+  const [route, go] = useRoute();
+  const [privacy, setPrivacy] = useState(() => {
+    try {
+      return window.localStorage.getItem('it_privacy') === '1';
+    } catch (e) {
+      return false;
+    }
+  });
 
   useEffect(() => {
-    let alive = true;
-    fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+    document.body.classList.toggle('privacy-mode', privacy);
+    try {
+      window.localStorage.setItem('it_privacy', privacy ? '1' : '0');
+    } catch (e) {
+      /* ignore */
+    }
+  }, [privacy]);
+
+  useEffect(() => {
+    // 数据随构建产出；查询串仅作浏览器侧去重，不影响 CDN 键
+    fetch('./data.json?t=' + Date.now())
       .then((r) => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })
-      .then((d) => alive && setData(d))
-      .catch((e) => alive && setErr(String(e && e.message ? e.message : e)));
-    return () => {
-      alive = false;
-    };
+      .then(setData)
+      .catch((e) => setErr(String(e && e.message ? e.message : e)));
   }, []);
 
-  useEffect(() => {
-    document.body.classList.toggle('privacy-mode', privacy);
-  }, [privacy]);
+  const title = (NAV.find((n) => n.id === route) || NAV[0]).label;
 
   if (err) {
     return (
       <div className="app">
-        <main className="main">
-          <div className="card">数据加载失败：{err}</div>
-        </main>
+        <Sidebar route={route} go={go} />
+        <div className="main">
+          <div className="card">
+            <div className="card-title">数据加载失败</div>
+            <div className="note-line">{err}</div>
+          </div>
+        </div>
       </div>
     );
   }
   if (!data) {
     return (
       <div className="app">
-        <main className="main">
-          <div className="card">加载中…</div>
-        </main>
+        <Sidebar route={route} go={go} />
+        <div className="main">
+          <div className="empty">正在加载数据…</div>
+        </div>
       </div>
     );
   }
 
+  const Page = PAGES[route] || OverviewPage;
   return (
     <div className="app">
-      <Sidebar />
-      <main className="main">
-        <Header data={data} privacy={privacy} onTogglePrivacy={() => setPrivacy((v) => !v)} />
-
-        {/* 1. 资产概览 */}
-        <AssetCards data={data} />
-
-        {/* 2. 今日建议与风险 */}
-        <AdviceRisk data={data} />
-
-        {/* 3. 持仓明细 */}
-        <Holdings data={data} />
-
-        {/* 4. 资产配置与账户摘要 */}
-        <section id="allocAccount">
-          <div className="grid-2">
-            <div className="card" id="allocation">
-              <div className="card-head">
-                <div className="card-title">资产配置</div>
-                <div className="card-hint">按类别</div>
-              </div>
-              <Allocation data={data} />
-            </div>
-            <div className="card" id="accountSummary">
-              <div className="card-head">
-                <div className="card-title">账户摘要</div>
-                <div className="card-hint">历史快照</div>
-              </div>
-              <AccountSummary data={data} />
-            </div>
-          </div>
-        </section>
-
-        {/* 5. 成本参考及历史记录 */}
-        <section id="records">
-          <CostRef data={data} />
-          <div className="card">
-            <div className="card-head">
-              <div className="card-title">
-                券商历史累计收益 <span className="card-hint">· 按自然年度</span>
-              </div>
-            </div>
-            <BrokerYearly data={data} />
-          </div>
-          <PriceHistory data={data} />
-          <Trades data={data} />
-        </section>
-
-        {/* 6. 保险 */}
-        <Insurance data={data} />
-
+      <Sidebar route={route} go={go} />
+      <div className="main">
+        <Header data={data} pageTitle={title} privacy={privacy} onTogglePrivacy={() => setPrivacy((v) => !v)} />
+        <Page data={data} go={go} />
         <Footer />
-      </main>
+      </div>
     </div>
   );
 }
